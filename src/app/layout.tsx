@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import Footer from "@/components/layout/Footer";
+import Navbar from "@/components/layout/Navbar";
 
 export const metadata: Metadata = {
   title: "UVA Pickleball Club",
   description: "Official website for the UVA Pickleball Club",
-}
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en">
@@ -22,5 +22,5 @@ export default function RootLayout({
         <Footer />
       </body>
     </html>
-  )
+  );
 }
