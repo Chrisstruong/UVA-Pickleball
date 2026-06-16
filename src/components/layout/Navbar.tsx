@@ -1,13 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
+import { CircleUser } from "lucide-react";
 
 const links = [
-  { name: "Home", href: "/" },
+   { name: "Team", href: "/team" },
   { name: "Events", href: "/events" },
   { name: "Schedule", href: "/schedule" },
   { name: "Merch", href: "/merch" },
   { name: "Announcements", href: "/announcements" },
-  { name: "Sponsors", href: "/sponsors" },
   { name: "About", href: "/about" },
 ];
 
@@ -46,6 +46,12 @@ export default function Navbar() {
         <button className="md:hidden text-sm font-medium">
           Menu
         </button>
+        <Link
+  href="/login"
+  className="flex items-center justify-center rounded-full p-2 hover:bg-slate-100"
+>
+  <CircleUser className="h-5 w-5" />
+</Link>
       </div>
     </header>
   );
