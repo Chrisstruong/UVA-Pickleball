@@ -13,7 +13,7 @@ const links = [
 
 export default function Navbar() {
   return (
-    <header className="sticky top-0 z-50 border-b bg-[#232D4B]">
+    <header className="sticky top-0 z-50 border-b bg-white">
       <div className="mx-auto flex h-24 max-w-[1400px] items-center justify-between px-6">
         <Link href="/" className="flex items-center gap-6">
           <Image
