@@ -30,7 +30,7 @@ const quickLinks = [
 const connectLinks = [
     {
         label: "Instagram",
-        href: "https://instagram.com"
+        href: "https://www.instagram.com/pickleballclubatuva"
     },
     {
         label: "GroupMe",
@@ -38,7 +38,7 @@ const connectLinks = [
     },
     {
         label: "Email",
-        href: "mailto: aaa@virginia.edu",
+        href: "mailto: zvk2ps@virginia.edu",
     }
 ]
 

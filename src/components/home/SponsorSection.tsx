@@ -55,7 +55,7 @@ export default function SponsorSection() {
     return (
         <section className="bg-black px-6 py-24 text-white">
             <div className="mx-auto max-w-7xl">
-                <div className="text-center">
+                <div className="text-center scroll-mt-24 bg-black" id="sponsors">
                     <p className="text-sm font-bold uppercase tracking-[0.45em] text-orange-500">
                         Our Sponsors
                     </p>
@@ -64,7 +64,7 @@ export default function SponsorSection() {
                     </h2>
                 </div>
 
-                <div className="mt-14 grid grid-cols-2 gap-px bg-white/20 md:grid-cols-3 lg:grid-cols-4">
+                <div className="mt-14 grid grid-cols-2 gap-px bg-white/20 md:grid-cols-3 lg:grid-cols-4" >
                     {sponsors.map((sponsor) => (
                         <div
                             key={sponsor.name}
