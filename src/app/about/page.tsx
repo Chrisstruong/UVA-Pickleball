@@ -25,7 +25,7 @@ const activities = [
         title: "Club Events",
         description:
             "Special events, Parents Weekend tournaments, and collaborations with other organizations.",
-        image: "/images/club/club-events.jpg",
+        image: "/images/club/Club-events.jpg",
     },
     {
         title: "Merch & Perks",
