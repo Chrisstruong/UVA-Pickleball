@@ -53,7 +53,7 @@ export default function TryoutDetailsPage() {
 
                                 <div className="overflow-hidden border border-slate-200 bg-[#232D4B] shadow-sm">
                                     <img
-                                        src="/images/tryout-schedule.jpg"
+                                        src="/images/2026tryoutschedule.jpg"
                                         alt="Fall 2026 UVA Pickleball tryout schedule"
                                         className="h-auto w-full object-cover"
                                     />
@@ -383,49 +383,6 @@ export default function TryoutDetailsPage() {
                         </div>
                     </div>
 
-                </div>
-            </section>
-
-
-
-            {/* Choose Tryout */}
-            <section className="bg-[#f7f7f5]">
-                <div className="mx-auto grid max-w-[1450px] gap-12 px-6 py-20 md:px-10 lg:grid-cols-2 lg:px-16">
-                    {/* Social */}
-                    <div>
-                        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#e57200]">
-                            Social Goals
-                        </p>
-
-                        <h2 className="mt-3 text-2xl font-bold">
-                            Social Tryout
-                        </h2>
-
-                        <div className="mt-5 space-y-3">
-                            <CheckItem>Regular organized play</CheckItem>
-                            <CheckItem>Play with a consistent group of members</CheckItem>
-                            <CheckItem>Competitive games without tournament travel</CheckItem>
-                            <CheckItem>Meet and play with other UVA students</CheckItem>
-                        </div>
-                    </div>
-
-                    {/* Tournament */}
-                    <div>
-                        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#e57200]">
-                            Tournament Goals
-                        </p>
-
-                        <h2 className="mt-3 text-2xl font-bold">
-                            Tournament Tryout
-                        </h2>
-
-                        <div className="mt-5 space-y-3">
-                            <CheckItem>Higher-level competitive play</CheckItem>
-                            <CheckItem>Collegiate tournament competition</CheckItem>
-                            <CheckItem>Greater competitive commitment</CheckItem>
-                            <CheckItem>Represent UVA in competition</CheckItem>
-                        </div>
-                    </div>
                 </div>
             </section>
 

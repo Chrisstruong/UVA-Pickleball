@@ -4,8 +4,7 @@ import {
   Trophy,
   Users,
   TrendingUp,
-  Flag,
-  Mail
+  Flag
 } from "lucide-react";
 
 const officers = [

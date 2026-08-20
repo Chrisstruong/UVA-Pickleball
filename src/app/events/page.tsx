@@ -20,61 +20,21 @@ type ClubEvent = {
 
 const events: ClubEvent[] = [
   {
-    title: "Fall 2026 Tryout - Day 1",
+    title: "Fall 2026 Tryout",
     type: "Tryout",
-    date: "Tuesday, Aug 25, 2026",
-    time: "5:00 PM – 7:00 PM",
+    date: "08/31 - 09/05",
+    time: "Your preference",
     location: "Snyder Tennis Center",
     attendees: ["Ava Chen", "Marcus Lee", "Sofia Patel", "Ethan Brooks"],
-    capacity: 32,
+    capacity: 504,
     image: "/images/events/Gengar.png",
     status: "open",
   },
-  {
-    title: "Fall 2026 Tryout - Day 2",
-    type: "Tryout",
-    date: "Wednesday, Aug 26, 2026",
-    time: "5:00 PM – 7:00 PM",
-    location: "Snyder Tennis Center",
-    attendees: ["Maya Johnson", "Daniel Kim", "Priya Shah", "Noah Williams", "Lena Ortiz","Minh Dang Truong", "Chris Struong","Alexis Rivera", "Jordan Lee", "Sophia Martinez", "Liam Thompson", "Isabella Garcia", "Ethan Nguyen", "Avery Brown", "Lucas Wilson", "Mia Davis", "Elijah Anderson", "Charlotte Taylor", "James Thomas", "Amelia White"],
-    capacity: 32,
-    image: "/images/events/Butterfree.png",
-    status: "open",
-  },
-  {
-    title: "Fall 2026 Tryout - Day 3",
-    type: "Tryout",
-    date: "Thursday, Aug 27, 2026",
-    time: "5:00 PM – 7:00 PM",
-    location: "Snyder Tennis Center",
-    attendees: ["Grace Nguyen", "Owen Miller", "Nina Thompson", "Caleb Davis", "Hannah Park", "Leo Garcia"],
-    capacity: 32,
-    image: "/images/events/Pikachu.png",
-    status: "open",
-  },
-  {
-    title: "Fall 2026 Tryout - Day 4",
-    type: "Tryout",
-    date: "Friday, Aug 28, 2026",
-    time: "5:00 PM – 7:00 PM",
-    location: "Snyder Tennis Center",
-    attendees: ["Emma Wilson", "Jason Liu", "Isabella Martinez", "Ryan Carter", "Aaliyah Brown"],
-    capacity: 32,
-    image: "/images/events/Snorlax.png",
-    status: "open",
-  },
-  {
-    title: "Fall 2026 Tryout - Day 5",
-    type: "Tryout",
-    date: "Saturday, Aug 29, 2026",
-    time: "10:00 AM – 12:00 PM",
-    location: "Snyder Tennis Center",
-    attendees: ["Olivia Taylor", "Ben Robinson", "Chloe Anderson", "Samir Gupta", "Natalie Moore", "Tyler Evans", "Mei Lin"],
-    capacity: 32,
-    image: "/images/events/Jigglypuff.png",
-    status: "open",
-  },
+  
 ];
+
+const signupUrl =
+  "https://docs.google.com/spreadsheets/d/1qt90UR_xtAeMSM6AJRSKwr4VOrTozdMEPMNmA7wGLqk/edit?gid=315280905#gid=315280905";
 
 export default function EventsPage() {
   return (
@@ -115,8 +75,8 @@ export default function EventsPage() {
               </h2>
 
               <p className="mt-4 max-w-[500px] text-sm leading-6 text-white/90 md:text-base">
-                Ready to compete, improve, and meet Hoos? Join one of our Fall
-                2026 tryout sessions and earn your spot on the UVA Pickleball Club.
+                Ready to compete, improve, and meet Hoos? Join our Fall
+                2026 tryout session and earn your spot on the UVA Pickleball Club.
                 Players of all skill levels are welcome.
               </p>
 
@@ -124,10 +84,13 @@ export default function EventsPage() {
                 <ScrollToUpcomingEventsButton />
 
                 <Button
+                  asChild
                   variant="secondary"
                   className="h-10 rounded-md px-6 font-heading text-[11px] uppercase tracking-wide md:h-11 md:px-7"
                 >
-                  View Tryout Schedule
+                  <Link href="/announcements/tryoutdetails">
+                    View Tryout Details
+                  </Link>
                 </Button>
               </div>
             </div>
@@ -180,8 +143,7 @@ export default function EventsPage() {
               Upcoming Events
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
-              Join the UVA Pickleball community on the courts. From daily drills
-              to high-stakes tournaments, find your match here.
+              Join the UVA Pickleball community on the courts. Find your match here.
             </p>
           </div>
 
@@ -228,12 +190,27 @@ export default function EventsPage() {
                   </div>
 
                   <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                    <Button
-                      className="w-full bg-orange-600 font-heading uppercase tracking-wide hover:bg-orange-700"
-                      disabled={event.status === "full"}
-                    >
-                      {event.status === "full" ? "Event Full" : "Sign Up"}
-                    </Button>
+                    {event.status === "full" ? (
+                      <Button
+                        className="w-full bg-orange-600 font-heading uppercase tracking-wide hover:bg-orange-700"
+                        disabled
+                      >
+                        Event Full
+                      </Button>
+                    ) : (
+                      <Button
+                        asChild
+                        className="w-full bg-orange-600 font-heading uppercase tracking-wide hover:bg-orange-700"
+                      >
+                        <a
+                          href={signupUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Sign Up
+                        </a>
+                      </Button>
+                    )}
 
                     <ViewAttendeesButton
                       eventTitle={event.title}

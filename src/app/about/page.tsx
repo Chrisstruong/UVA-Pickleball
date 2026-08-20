@@ -1,6 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Check } from "lucide-react";
+import {
+    ArrowRight,
+    CalendarDays,
+    Check,
+    UserRound,
+    UsersRound,
+} from "lucide-react";
+import ScrollToSectionButton from "@/components/ScrollToSectionButton";
 
 const activities = [
     {
@@ -45,6 +52,8 @@ export default function AboutPage() {
     return (
         <main className="bg-white text-[#111827]">
 
+
+
             {/* ====================================================== */}
             {/* HERO */}
             {/* ====================================================== */}
@@ -62,7 +71,16 @@ export default function AboutPage() {
                 <div className="absolute inset-0 bg-black/35" />
                 <div className="absolute inset-0 bg-gradient-to-r from-[#06172a]/95 via-[#06172a]/65 to-[#06172a]/20" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#06172a]/80 via-transparent to-black/15" />
-
+                <div className="absolute right-40 top-1/2 z-10 hidden -translate-y-1/2 lg:block">
+                    <div className="relative h-[560px] w-[380px] overflow-hidden rounded-2xl border border-white/20 shadow-2xl">
+                        <Image
+                            src="/images/club/earning.jpg"
+                            alt="UVA Pickleball Fall 2026 Practice Schedule"
+                            fill
+                            className="object-cover"
+                        />
+                    </div>
+                </div>
                 <div className="relative z-10 mx-auto flex min-h-[720px] max-w-[1450px] items-center px-6 py-20 md:px-10 lg:min-h-[780px] lg:px-16">
                     <div className="max-w-4xl">
 
@@ -87,20 +105,19 @@ export default function AboutPage() {
                         </p>
 
                         <div className="mt-8 flex flex-wrap gap-3">
-                            <Link
-                                href="/join"
+                            <ScrollToSectionButton
+                                targetId="how-to-join"
                                 className="inline-flex items-center gap-2 bg-[#E57200] px-7 py-3.5 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-[#c95f00]"
                             >
-                                Join The Club
-                                <ArrowRight className="h-4 w-4" />
-                            </Link>
+                                How to Join
+                            </ScrollToSectionButton>
 
-                            <a
-                                href="#groups"
+                            <ScrollToSectionButton
+                                targetId="groups"
                                 className="inline-flex items-center border border-white/60 px-7 py-3.5 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-white hover:text-[#111827]"
                             >
                                 Explore The Groups
-                            </a>
+                            </ScrollToSectionButton>
                         </div>
 
                     </div>
@@ -126,6 +143,160 @@ export default function AboutPage() {
                 </div>
             </section>
 
+            {/* ====================================================== */}
+            {/* HOW TO JOIN */}
+            {/* ====================================================== */}
+
+            <section id="how-to-join" className="overflow-hidden bg-[#f7f7f5]">
+                <div className="mx-auto max-w-[1450px] px-6 py-20 md:px-10 lg:px-16 lg:py-24">
+
+                    {/* Heading */}
+                    <div className="mx-auto max-w-3xl text-center">
+                        <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-[#E57200]">
+                            Join The Club
+                        </p>
+
+                        <h2 className="font-bebas mt-3 text-5xl uppercase leading-none tracking-wide text-[#07192d] md:text-7xl">
+                            How To Join
+                        </h2>
+
+                        <div className="mx-auto mt-5 h-[3px] w-14 bg-[#E57200]" />
+
+                        <p className="mx-auto mt-6 max-w-2xl text-sm leading-6 text-slate-600 md:text-base">
+                            Getting started is simple. Register for a tryout, show us your
+                            game, and find your place in UVA Pickleball.
+                        </p>
+                    </div>
+
+                    {/* Steps */}
+                    <div className="relative mt-16 grid gap-8 lg:grid-cols-3 lg:gap-10">
+
+                        {/* Connecting line — desktop only */}
+                        <div className="absolute left-[16%] right-[16%] top-[82px] hidden h-px bg-slate-300 lg:block" />
+
+                        {/* STEP 01 */}
+                        <div className="relative z-10">
+                            <div className="flex h-full flex-col bg-white px-7 py-8 shadow-sm md:px-8 md:py-10">
+
+                                <div className="flex items-start justify-between gap-5">
+                                    <span className="font-bebas text-7xl leading-none text-[#E57200]">
+                                        01
+                                    </span>
+
+                                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-[#f7f7f5] text-[#07192d]">
+                                        <CalendarDays className="h-6 w-6" />
+                                    </div>
+                                </div>
+
+                                <div className="mt-8">
+                                    <h3 className="text-sm font-extrabold uppercase leading-5 tracking-wide text-[#07192d]">
+                                        Register For A
+                                        <span className="block text-[#E57200]">
+                                            Tryout Session
+                                        </span>
+                                    </h3>
+
+                                    <p className="mt-4 text-md leading-5 text-slate-600">
+                                        Register for ONE tryout session only between 08/31 and 09/05. Spots are limited, so sign up early to secure your preferred session.
+                                    </p>
+                                </div>
+
+                                <div className="mt-auto pt-10">
+                                    <a
+                                        href="#"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 bg-[#E57200] px-5 py-3 text-[15px] font-bold uppercase tracking-[0.12em] text-white transition hover:bg-[#c95f00]"
+                                    >
+                                        Sign Up
+                                        <ArrowRight className="h-3.5 w-3.5" />
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* STEP 02 */}
+                        <div className="relative z-10 lg:mt-8">
+                            <div className="flex h-full flex-col bg-white px-7 py-8 shadow-sm md:px-8 md:py-10">
+
+                                <div className="flex items-start justify-between gap-5 ">
+                                    <span className="font-bebas text-7xl leading-none text-[#E57200]" >
+                                        02
+                                    </span>
+
+                                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-[#f7f7f5] text-[#07192d]">
+                                        <UsersRound className="h-6 w-6" />
+                                    </div>
+                                </div>
+
+                                <div className="mt-8">
+                                    <h3 className="text-sm font-extrabold uppercase leading-5 tracking-wide text-[#07192d]">
+                                        Attend Your
+                                        <span className="block">
+                                            Tryout
+                                        </span>
+                                    </h3>
+
+                                    <p className="mt-4 text-md leading-5 text-slate-600">
+                                        Must come to your selected session and play. Our officers
+                                        will evaluate players and determine group placement
+                                        after tryouts.
+                                    </p>
+                                </div>
+
+                                <div className="mt-auto pt-10">
+                                    <div className="inline-flex items-center gap-2 bg-[#f7f7f5] px-4 py-2.5 text-[15px] font-bold uppercase tracking-[0.08em] text-slate-600">
+                                        <CalendarDays className="h-3.5 w-3.5" />
+                                        Aug 31 – Sep 5
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* STEP 03 */}
+                        <div className="relative z-10 lg:mt-16">
+                            <div className="flex h-full flex-col bg-gradient-to-br from-white via-white to-[#e8f4ff] px-7 py-8 shadow-sm md:px-8 md:py-10">
+
+                                <div className="flex items-start justify-between gap-5">
+                                    <span className="font-bebas text-7xl leading-none text-[#E57200]">
+                                        03
+                                    </span>
+
+                                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-[#0B67A3]/15 bg-white text-[#0B67A3]">
+                                        <UserRound className="h-6 w-6" />
+                                    </div>
+                                </div>
+
+                                <div className="mt-8">
+                                    <h3 className="text-sm font-extrabold uppercase leading-5 tracking-wide text-[#07192d]">
+                                        Create Your
+                                        <span className="block text-[#E57200]">
+                                            Account
+                                        </span>
+                                    </h3>
+
+                                    <p className="mt-4 text-md leading-5 text-slate-600">
+                                        After tryouts, create your account to view your results and register for upcoming club events and social open-play sessions.
+                                    </p>
+                                </div>
+
+                                <div className="mt-auto pt-10">
+                                    <Link
+                                        href="/signup"
+                                        className="inline-flex items-center gap-2 bg-[#E57200] px-5 py-3 text-[15px] font-bold uppercase tracking-[0.12em] text-white transition hover:bg-[#c95f00]"
+                                    >
+                                        Create Account
+                                        <ArrowRight className="h-3.5 w-3.5" />
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </section>
+
 
             {/* ====================================================== */}
             {/* CLUB LIFE */}
@@ -143,7 +314,7 @@ export default function AboutPage() {
                             </p>
 
                             <h2 className="font-bebas mt-3 text-5xl uppercase leading-[0.9] tracking-wide md:text-6xl">
-                                Play. Compete.
+                                Play Compete
                                 <br />
                                 Connect.
                             </h2>
@@ -251,9 +422,7 @@ export default function AboutPage() {
                             </h2>
 
                             <p className="mt-6 max-w-sm text-sm leading-6 text-slate-600">
-                                Whether you&apos;re picking up a paddle for the first
-                                time or looking to compete for UVA, our three playing
-                                groups help you find the level of play that fits you.
+                                Whether you&apos;re brand new or nationally competitive, there&apos;s place on the court for you.
                             </p>
                         </div>
 
@@ -267,11 +436,11 @@ export default function AboutPage() {
                                 subtitle="Open To Everyone"
                                 image="/images/club/general.jpg"
                                 items={[
-                                    "Beginner-friendly",
+                                    "Tailored for beginners",
                                     "Welcoming environment",
-                                    "Open-play opportunities",
-                                    "Equipment available",
-                                    "No tryout required",
+                                    "Courts Friday 3:30-5:30",
+                                    "Equipment Provided",
+                                    "Tournament opportunities"
                                 ]}
                                 footer="No Tryout Required"
                             />
@@ -279,15 +448,14 @@ export default function AboutPage() {
                             <GroupCard
                                 accent="navy"
                                 title="Social"
-                                subtitle="250+ Players"
+                                subtitle="250 Players"
                                 image="/images/club/social-team.jpg"
                                 items={[
-                                    "Organized play",
-                                    "Competitive games",
                                     "Social tournaments",
+                                    "Social events(mixers, parties, dinks & drinks)",
                                     "Focus on improvement",
-                                    "Club community",
-                                    "Tryout required",
+                                    "Prime practice times",
+                                    "Tryouts required",
                                 ]}
                                 footer="Tryout Required"
                             />
@@ -298,14 +466,13 @@ export default function AboutPage() {
                                 subtitle="24 Players · Most Competitive"
                                 image="/images/club/tournament-team.jpg"
                                 items={[
-                                    "Collegiate competition",
-                                    "Tournament travel",
-                                    "Competitive practices",
-                                    "Represent UVA",
+                                    "Tournaments/Paid Travel",
+                                    "2023 National Champions",
                                     "Sponsorship opportunities",
-                                    "Tryout + callbacks required",
+                                    "Prime practice times",
+                                    "Tryouts required",
                                 ]}
-                                footer="Tryout + Callbacks Required"
+                                footer="Tryout Required"
                             />
 
                         </div>
@@ -404,13 +571,12 @@ export default function AboutPage() {
 
                     <div className="flex flex-wrap gap-3">
 
-                        <Link
-                            href="/join"
+                        <ScrollToSectionButton
+                            targetId="how-to-join"
                             className="inline-flex items-center gap-2 bg-[#E57200] px-8 py-4 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-[#c95f00]"
                         >
                             Join UVA Pickleball
-                            <ArrowRight className="h-4 w-4" />
-                        </Link>
+                        </ScrollToSectionButton>
 
                         <Link
                             href="/announcements/tryoutdetails"

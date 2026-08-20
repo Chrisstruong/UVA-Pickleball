@@ -29,14 +29,24 @@ export default function AnnouncementsSection() {
             <div className="mx-auto max-w-7xl px-6 py-20">
 
                 {/* Header */}
-                <div className="mb-10">
-                    <p className="font-heading text-xs font-bold uppercase tracking-[0.3em] text-orange-600">
-                        Fall 2026
-                    </p>
+                <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                        <p className="font-heading text-xs font-bold uppercase tracking-[0.3em] text-orange-600">
+                            Fall 2026
+                        </p>
 
-                    <h2 className="font-heading mt-3 text-4xl font-bold tracking-tight md:text-5xl">
-                        What&apos;s Ahead
-                    </h2>
+                        <h2 className="font-heading mt-3 text-4xl font-bold tracking-tight md:text-5xl">
+                            What&apos;s Ahead
+                        </h2>
+                    </div>
+
+                    <Link
+                        href="/announcements"
+                        className="font-heading inline-flex w-fit items-center gap-2 border border-[#E57200] px-5 py-3 text-xs font-bold uppercase tracking-wider text-[#E57200] transition hover:bg-[#E57200] hover:text-white"
+                    >
+                        View All Updates
+                        <span>→</span>
+                    </Link>
                 </div>
 
                 {/* Cards */}

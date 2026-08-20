@@ -48,7 +48,7 @@ export default function Hero() {
                             asChild
                             className="h-12 bg-orange-500 px-9 font-bold uppercase tracking-wide text-white hover:bg-orange-600"
                         >
-                            <Link href="/contact">
+                            <Link href="/about">
                                Explore the club
                             </Link>
                         </Button>
