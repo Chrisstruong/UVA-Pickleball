@@ -299,7 +299,7 @@ export default function ContactPage() {
               </a>
 
               {/* Email */}
-              <a
+              {/* <a
                 href="mailto:zvk2ps@virginia.edu"
                 className="group flex w-fit gap-4"
               >
@@ -314,7 +314,7 @@ export default function ContactPage() {
                     zvk2ps@virginia.edu
                   </span>
                 </div>
-              </a>
+              </a> */}
             </div>
           </aside>
         </div>

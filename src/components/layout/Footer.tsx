@@ -35,10 +35,6 @@ const connectLinks = [
     {
         label: "GroupMe",
         href: "https://groupme.com",
-    },
-    {
-        label: "Email",
-        href: "mailto: zvk2ps@virginia.edu",
     }
 ]
 
