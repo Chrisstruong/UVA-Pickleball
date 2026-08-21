@@ -94,11 +94,11 @@ export default function TeamPage() {
                 </p>
 
                 <h2 className="mt-1 text-xl font-bold tracking-tight text-[#111827]">
-                  New tournament players coming soon
+                  New tournament and social players coming soon
                 </h2>
 
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-                  Our Fall 2026 tournament roster will be finalized after tryouts.
+                  Our Fall 2026 tournament and social roster will be finalized after tryouts.
                   Check back soon to meet the newest members representing UVA.
                 </p>
               </div>

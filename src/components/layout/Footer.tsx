@@ -46,7 +46,7 @@ const connectLinks = [
     },
     {
         label: "Email",
-        href: "mailto:pickleatuva@gmail.com",
+        href: "https://mail.google.com/mail/?view=cm&fs=1&to=pickleatuva@gmail.com",
         icon: Mail,
     },
     {
@@ -104,8 +104,8 @@ export default function Footer() {
                                         href={link.href}
                                         aria-label={link.label}
                                         className="text-white/60 transition hover:text-orange-500"
-                                        target={link.label === "Email" ? undefined : "_blank"}
-                                        rel={link.label === "Email" ? undefined : "noreferrer"}
+                                        target="_blank"
+                                        rel="noreferrer"
                                     >
                                         <Icon className="h-9 w-9 shrink-0" />
                                     </Link>

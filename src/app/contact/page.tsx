@@ -4,7 +4,8 @@ import {
   Trophy,
   Users,
   TrendingUp,
-  Flag
+  Flag,
+  Mail
 } from "lucide-react";
 
 const officers = [
@@ -93,9 +94,7 @@ export default function ContactPage() {
             </h1>
 
             <p className="mt-7 max-w-xl text-base leading-8 text-slate-700 md:text-lg">
-              Founded at the University of Virginia, UVA Pickleball
-              brings students together through fellowship, friendly
-              competition, and a shared love for the game.
+              Founded at the University of Virginia, UVA Pickleball brings students together through recreational play, friendly competition, and a shared passion for pickleball.
             </p>
           </div>
 
@@ -120,7 +119,7 @@ export default function ContactPage() {
             <div className="relative overflow-hidden rounded-xl bg-[#f7f7f5] px-8 py-12 md:px-12 md:py-14">
               <div className="relative z-10 max-w-2xl">
                 <h2 className="text-3xl font-bold leading-tight tracking-tight text-[#1f2328] md:text-4xl">
-                  Cultivating Community Through
+                  Growing Community Through
                   <br />
                   Competition
                 </h2>
@@ -208,8 +207,9 @@ export default function ContactPage() {
             </h2>
 
             <p className="mt-2 max-w-sm text-sm leading-6 text-slate-700">
-              Have questions about tryouts, membership, or
-              sponsorships? Drop us a message.
+              {/* Have questions about tryouts, access to the club, or
+              sponsorships? Drop us a message. */}
+              This feature will be available soon! Contact us directly at pickleatuva@gmail.com
             </p>
 
             <form className="mt-7 space-y-5">
@@ -266,55 +266,56 @@ export default function ContactPage() {
 
               <button
                 type="submit"
-                className="h-12 w-full rounded-sm bg-[#e57200] text-sm font-bold uppercase tracking-wide text-white transition hover:bg-[#c95f00]"
+                disabled
+                className="h-12 w-full cursor-not-allowed rounded-sm bg-slate-300 text-sm font-bold uppercase tracking-wide text-slate-500"
               >
                 Send Message
               </button>
+
+              <div className="border-t border-slate-200 pt-6">
+                <div className="space-y-6">
+                  {/* Instagram */}
+                  <a
+                    href="https://www.instagram.com/pickleballclubatuva"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex w-fit gap-4"
+                  >
+                    <FaInstagram className="mt-0.5 h-6 w-6 shrink-0 text-[#e57200] transition group-hover:text-[#c95f00]" />
+
+                    <div>
+                      <p className="text-[11px] font-bold uppercase tracking-wider">
+                        Instagram
+                      </p>
+
+                      <span className="mt-1 block text-sm text-slate-700 transition group-hover:text-[#e57200]">
+                        @pickleballclubatuva
+                      </span>
+                    </div>
+                  </a>
+
+                  {/* Email */}
+                  <a
+                    href="https://mail.google.com/mail/?view=cm&fs=1&to=pickleatuva@gmail.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex w-fit gap-4"
+                  >
+                    <Mail className="mt-0.5 h-6 w-6 shrink-0 text-[#e57200] transition group-hover:text-[#c95f00]" />
+
+                    <div>
+                      <p className="text-[11px] font-bold uppercase tracking-wider">
+                        Email
+                      </p>
+
+                      <span className="mt-1 block text-sm text-slate-700 transition group-hover:text-[#e57200]">
+                        pickleatuva@gmail.com
+                      </span>
+                    </div>
+                  </a>
+                </div>
+              </div>
             </form>
-
-            <div className="my-7 h-px bg-slate-200" />
-
-            <div className="my-7 h-px bg-slate-200" />
-
-            <div className="space-y-6">
-              {/* Instagram */}
-              <a
-                href="https://www.instagram.com/pickleballclubatuva"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex w-fit gap-4"
-              >
-                <FaInstagram className="mt-0.5 h-6 w-6 shrink-0 text-[#e57200] transition group-hover:text-[#c95f00]" />
-
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-wider">
-                    Instagram
-                  </p>
-
-                  <span className="mt-1 block text-sm text-slate-700 transition group-hover:text-[#e57200]">
-                    @pickleballclubatuva
-                  </span>
-                </div>
-              </a>
-
-              {/* Email */}
-              {/* <a
-                href="mailto:zvk2ps@virginia.edu"
-                className="group flex w-fit gap-4"
-              >
-                <Mail className="mt-0.5 h-6 w-6 shrink-0 text-[#e57200] transition group-hover:text-[#c95f00]" />
-
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-wider">
-                    Email Contact
-                  </p>
-
-                  <span className="mt-1 block text-sm text-slate-700 transition group-hover:text-[#e57200]">
-                    zvk2ps@virginia.edu
-                  </span>
-                </div>
-              </a> */}
-            </div>
           </aside>
         </div>
       </section>
