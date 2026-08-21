@@ -58,7 +58,7 @@ export default function AboutPage() {
             {/* HERO */}
             {/* ====================================================== */}
 
-            <section className="relative min-h-[720px] overflow-hidden bg-[#07192d] lg:min-h-[780px]">
+            <section className="relative min-h-[620px] overflow-hidden bg-[#07192d] sm:min-h-[680px] lg:min-h-[780px]">
                 <Image
                     src="/images/club/hero.jpg"
                     alt="UVA Pickleball Club"
@@ -81,14 +81,14 @@ export default function AboutPage() {
                         />
                     </div>
                 </div>
-                <div className="relative z-10 mx-auto flex min-h-[720px] max-w-[1450px] items-center px-6 py-20 md:px-10 lg:min-h-[780px] lg:px-16">
+                <div className="relative z-10 mx-auto flex min-h-[620px] max-w-[1450px] items-center px-5 py-16 sm:min-h-[680px] md:px-10 lg:min-h-[780px] lg:px-16">
                     <div className="max-w-4xl">
 
                         <p className="mb-4 text-xs font-bold uppercase tracking-[0.24em] text-[#E57200]">
                             University of Virginia
                         </p>
 
-                        <h1 className="font-bebas max-w-4xl text-7xl uppercase leading-[0.82] tracking-wide text-white sm:text-8xl lg:text-[132px]">
+                        <h1 className="font-bebas max-w-4xl text-[64px] uppercase leading-[0.86] tracking-wide text-white min-[380px]:text-7xl sm:text-8xl lg:text-[132px]">
                             UVA
                             <span className="block text-[#E57200]">
                                 Pickleball
@@ -96,7 +96,7 @@ export default function AboutPage() {
                             Club
                         </h1>
 
-                        <p className="mt-8 max-w-xl text-sm leading-7 text-white/85 md:text-base">
+                        <p className="mt-7 max-w-xl text-sm leading-6 text-white/85 md:text-base md:leading-7">
                             Founded in 2020, UVA Pickleball has grown into one of
                             the largest student sports communities at the University
                             of Virginia. Whether you&apos;re picking up a paddle for
@@ -104,17 +104,17 @@ export default function AboutPage() {
                             there&apos;s a place to play.
                         </p>
 
-                        <div className="mt-8 flex flex-wrap gap-3">
+                        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                             <ScrollToSectionButton
                                 targetId="how-to-join"
-                                className="inline-flex items-center gap-2 bg-[#E57200] px-7 py-3.5 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-[#c95f00]"
+                                className="inline-flex w-full items-center justify-center gap-2 bg-[#E57200] px-7 py-3.5 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-[#c95f00] sm:w-auto"
                             >
                                 How to Join
                             </ScrollToSectionButton>
 
                             <ScrollToSectionButton
                                 targetId="groups"
-                                className="inline-flex items-center border border-white/60 px-7 py-3.5 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-white hover:text-[#111827]"
+                                className="inline-flex w-full items-center justify-center border border-white/60 px-7 py-3.5 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-white hover:text-[#111827] sm:w-auto"
                             >
                                 Explore The Groups
                             </ScrollToSectionButton>
@@ -130,7 +130,7 @@ export default function AboutPage() {
             {/* ====================================================== */}
 
             <section className="bg-[#07192d] text-white">
-                <div className="mx-auto grid max-w-[1450px] grid-cols-2 px-6 py-8 md:grid-cols-4 md:px-10 lg:px-16">
+                <div className="mx-auto grid max-w-[1450px] grid-cols-2 px-5 py-6 md:grid-cols-4 md:px-10 lg:px-16">
 
                     <Stat number="700+" label="Members" />
 
@@ -148,7 +148,7 @@ export default function AboutPage() {
             {/* ====================================================== */}
 
             <section id="how-to-join" className="overflow-hidden bg-[#f7f7f5]">
-                <div className="mx-auto max-w-[1450px] px-6 py-20 md:px-10 lg:px-16 lg:py-24">
+                <div className="mx-auto max-w-[1450px] px-5 py-14 md:px-10 md:py-20 lg:px-16 lg:py-24">
 
                     {/* Heading */}
                     <div className="mx-auto max-w-3xl text-center">
@@ -156,7 +156,7 @@ export default function AboutPage() {
                             Join The Club
                         </p>
 
-                        <h2 className="font-bebas mt-3 text-5xl uppercase leading-none tracking-wide text-[#07192d] md:text-7xl">
+                        <h2 className="font-bebas mt-3 text-5xl uppercase leading-none tracking-wide text-[#07192d] sm:text-6xl md:text-7xl">
                             How To Join
                         </h2>
 
@@ -169,21 +169,21 @@ export default function AboutPage() {
                     </div>
 
                     {/* Steps */}
-                    <div className="relative mt-16 grid gap-8 lg:grid-cols-3 lg:gap-10">
+                    <div className="relative mt-12 grid gap-6 md:mt-16 lg:grid-cols-3 lg:gap-10">
 
                         {/* Connecting line — desktop only */}
                         <div className="absolute left-[16%] right-[16%] top-[82px] hidden h-px bg-slate-300 lg:block" />
 
                         {/* STEP 01 */}
                         <div className="relative z-10">
-                            <div className="flex h-full flex-col bg-white px-7 py-8 shadow-sm md:px-8 md:py-10">
+                            <div className="flex h-full flex-col bg-white px-6 py-7 shadow-sm md:px-8 md:py-10">
 
                                 <div className="flex items-start justify-between gap-5">
-                                    <span className="font-bebas text-7xl leading-none text-[#E57200]">
+                                    <span className="font-bebas text-6xl leading-none text-[#E57200] md:text-7xl">
                                         01
                                     </span>
 
-                                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-[#f7f7f5] text-[#07192d]">
+                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-[#f7f7f5] text-[#07192d] md:h-14 md:w-14">
                                         <CalendarDays className="h-6 w-6" />
                                     </div>
                                 </div>
@@ -196,7 +196,7 @@ export default function AboutPage() {
                                         </span>
                                     </h3>
 
-                                    <p className="mt-4 text-md leading-5 text-slate-600">
+                                    <p className="mt-4 text-sm leading-6 text-slate-600">
                                         Register for ONE tryout session only between 08/31 and 09/05. Spots are limited, so sign up early to secure your preferred session.
                                     </p>
                                 </div>
@@ -206,7 +206,7 @@ export default function AboutPage() {
                                         href="https://docs.google.com/spreadsheets/d/1qt90UR_xtAeMSM6AJRSKwr4VOrTozdMEPMNmA7wGLqk/edit?gid=315280905#gid=315280905"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-2 bg-[#E57200] px-5 py-3 text-[15px] font-bold uppercase tracking-[0.12em] text-white transition hover:bg-[#c95f00]"
+                                        className="inline-flex w-full items-center justify-center gap-2 bg-[#E57200] px-5 py-3 text-sm font-bold uppercase tracking-[0.12em] text-white transition hover:bg-[#c95f00] sm:w-auto"
                                     >
                                         Sign Up
                                         <ArrowRight className="h-3.5 w-3.5" />
@@ -217,14 +217,14 @@ export default function AboutPage() {
 
                         {/* STEP 02 */}
                         <div className="relative z-10 lg:mt-8">
-                            <div className="flex h-full flex-col bg-white px-7 py-8 shadow-sm md:px-8 md:py-10">
+                            <div className="flex h-full flex-col bg-white px-6 py-7 shadow-sm md:px-8 md:py-10">
 
                                 <div className="flex items-start justify-between gap-5 ">
-                                    <span className="font-bebas text-7xl leading-none text-[#E57200]" >
+                                    <span className="font-bebas text-6xl leading-none text-[#E57200] md:text-7xl" >
                                         02
                                     </span>
 
-                                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-[#f7f7f5] text-[#07192d]">
+                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-[#f7f7f5] text-[#07192d] md:h-14 md:w-14">
                                         <UsersRound className="h-6 w-6" />
                                     </div>
                                 </div>
@@ -237,7 +237,7 @@ export default function AboutPage() {
                                         </span>
                                     </h3>
 
-                                    <p className="mt-4 text-md leading-5 text-slate-600">
+                                    <p className="mt-4 text-sm leading-6 text-slate-600">
                                         Must come to your selected session and play. Our officers
                                         will evaluate players and determine group placement
                                         after tryouts.
@@ -245,7 +245,7 @@ export default function AboutPage() {
                                 </div>
 
                                 <div className="mt-auto pt-10">
-                                    <div className="inline-flex items-center gap-2 bg-[#f7f7f5] px-4 py-2.5 text-[15px] font-bold uppercase tracking-[0.08em] text-slate-600">
+                                    <div className="inline-flex items-center gap-2 bg-[#f7f7f5] px-4 py-2.5 text-sm font-bold uppercase tracking-[0.08em] text-slate-600">
                                         <CalendarDays className="h-3.5 w-3.5" />
                                         Aug 31 – Sep 5
                                     </div>
@@ -255,14 +255,14 @@ export default function AboutPage() {
 
                         {/* STEP 03 */}
                         <div className="relative z-10 lg:mt-16">
-                            <div className="flex h-full flex-col bg-gradient-to-br from-white via-white to-[#e8f4ff] px-7 py-8 shadow-sm md:px-8 md:py-10">
+                            <div className="flex h-full flex-col bg-gradient-to-br from-white via-white to-[#e8f4ff] px-6 py-7 shadow-sm md:px-8 md:py-10">
 
                                 <div className="flex items-start justify-between gap-5">
-                                    <span className="font-bebas text-7xl leading-none text-[#E57200]">
+                                    <span className="font-bebas text-6xl leading-none text-[#E57200] md:text-7xl">
                                         03
                                     </span>
 
-                                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-[#0B67A3]/15 bg-white text-[#0B67A3]">
+                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[#0B67A3]/15 bg-white text-[#0B67A3] md:h-14 md:w-14">
                                         <UserRound className="h-6 w-6" />
                                     </div>
                                 </div>
@@ -275,7 +275,7 @@ export default function AboutPage() {
                                         </span>
                                     </h3>
 
-                                    <p className="mt-4 text-md leading-5 text-slate-600">
+                                    <p className="mt-4 text-sm leading-6 text-slate-600">
                                         After tryouts, create your account to view your results and register for upcoming club events and social open-play sessions.
                                     </p>
                                 </div>
@@ -283,7 +283,7 @@ export default function AboutPage() {
                                 <div className="mt-auto pt-10">
                                     <Link
                                         href="/signup"
-                                        className="inline-flex items-center gap-2 bg-[#E57200] px-5 py-3 text-[15px] font-bold uppercase tracking-[0.12em] text-white transition hover:bg-[#c95f00]"
+                                        className="inline-flex w-full items-center justify-center gap-2 bg-[#E57200] px-5 py-3 text-sm font-bold uppercase tracking-[0.12em] text-white transition hover:bg-[#c95f00] sm:w-auto"
                                     >
                                         Create Account
                                         <ArrowRight className="h-3.5 w-3.5" />
@@ -303,9 +303,9 @@ export default function AboutPage() {
             {/* ====================================================== */}
 
             <section className="bg-[#f7f7f5]">
-                <div className="mx-auto max-w-[1450px] px-6 py-20 md:px-10 lg:px-16 lg:py-24">
+                <div className="mx-auto max-w-[1450px] px-5 py-14 md:px-10 md:py-20 lg:px-16 lg:py-24">
 
-                    <div className="grid gap-12 lg:grid-cols-[0.75fr_2fr]">
+                    <div className="grid gap-10 lg:grid-cols-[0.75fr_2fr] lg:gap-12">
 
                         {/* Heading */}
                         <div>
@@ -313,13 +313,13 @@ export default function AboutPage() {
                                 Club Life
                             </p>
 
-                            <h2 className="font-bebas mt-3 text-5xl uppercase leading-[0.9] tracking-wide md:text-6xl">
+                            <h2 className="font-bebas mt-3 text-5xl uppercase leading-[0.9] tracking-wide sm:text-6xl">
                                 Play Compete
                                 <br />
                                 Connect.
                             </h2>
 
-                            <p className="mt-6 max-w-sm text-sm leading-6 text-slate-600">
+                            <p className="mt-6 max-w-xl text-sm leading-6 text-slate-600 lg:max-w-sm">
                                 There&apos;s always something happening at UVA
                                 Pickleball. From open play to tournaments and social
                                 events, we bring the UVA community together on and
@@ -352,12 +352,12 @@ export default function AboutPage() {
                 <div className="mx-auto grid max-w-[1450px] lg:grid-cols-[0.8fr_1.4fr_0.7fr]">
 
                     {/* Copy */}
-                    <div className="flex flex-col justify-center px-6 py-16 md:px-10 lg:px-16">
+                    <div className="flex flex-col justify-center px-5 py-14 md:px-10 md:py-16 lg:px-16">
                         <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#E57200]">
                             The Community
                         </p>
 
-                        <h2 className="font-bebas mt-4 text-5xl uppercase leading-[0.92] tracking-wide md:text-6xl">
+                        <h2 className="font-bebas mt-4 text-5xl uppercase leading-[0.92] tracking-wide sm:text-6xl">
                             More Than
                             <br />
                             Pickleball.
@@ -379,7 +379,7 @@ export default function AboutPage() {
 
 
                     {/* Main image */}
-                    <div className="relative min-h-[420px] lg:min-h-[560px]">
+                    <div className="relative min-h-[200px] border-l border-t border-white/10 sm:min-h-[160px] lg:min-h-0">
                         <Image
                             src="/images/club/community-main.jpg"
                             alt="UVA Pickleball community"
@@ -390,7 +390,7 @@ export default function AboutPage() {
 
 
                     {/* Side images */}
-                    <div className="grid grid-cols-3 lg:grid-cols-1">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1">
                         <CommunityImage src="/images/club/community-1.jpg" />
                         <CommunityImage src="/images/club/community-2.jpg" />
                         <CommunityImage src="/images/club/community-3.jpg" />
@@ -405,7 +405,7 @@ export default function AboutPage() {
             {/* ====================================================== */}
 
             <section id="groups" className="bg-white">
-                <div className="mx-auto max-w-[1450px] px-6 py-20 md:px-10 lg:px-16 lg:py-24">
+                <div className="mx-auto max-w-[1450px] px-5 py-14 md:px-10 md:py-20 lg:px-16 lg:py-24">
 
                     <div className="grid gap-10 lg:grid-cols-[0.75fr_2.1fr]">
 
@@ -415,20 +415,20 @@ export default function AboutPage() {
                                 Find Your Level
                             </p>
 
-                            <h2 className="font-bebas mt-3 text-5xl uppercase leading-[0.9] md:text-6xl">
+                            <h2 className="font-bebas mt-3 text-5xl uppercase leading-[0.9] sm:text-6xl">
                                 Three Ways
                                 <br />
                                 To Play.
                             </h2>
 
-                            <p className="mt-6 max-w-sm text-sm leading-6 text-slate-600">
-                                Whether you&apos;re brand new or nationally competitive, there&apos;s place on the court for you.
+                            <p className="mt-6 max-w-xl text-sm leading-6 text-slate-600 lg:max-w-sm">
+                                Whether you&apos;re brand new or nationally competitive, there&apos;s a place on the court for you.
                             </p>
                         </div>
 
 
                         {/* Groups */}
-                        <div className="grid gap-6 md:grid-cols-3">
+                        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
 
                             <GroupCard
                                 accent="orange"
@@ -452,7 +452,7 @@ export default function AboutPage() {
                                 image="/images/club/social-team.jpg"
                                 items={[
                                     "Social tournaments",
-                                    "Social events(mixers, parties, dinks & drinks)",
+                                    "Social events: mixers, parties, and Dinks & Drinks",
                                     "Focus on improvement",
                                     "Prime practice times",
                                     "Tryouts required",
@@ -498,14 +498,14 @@ export default function AboutPage() {
 
                 <div className="absolute inset-0 bg-[#07192d]/65" />
 
-                <div className="relative z-10 mx-auto grid min-h-[430px] max-w-[1450px] items-center gap-12 px-6 py-16 md:px-10 lg:grid-cols-[1fr_1fr_0.6fr] lg:px-16">
+                <div className="relative z-10 mx-auto grid min-h-[430px] max-w-[1450px] items-center gap-10 px-5 py-14 md:px-10 md:py-16 lg:grid-cols-[1fr_1fr_0.6fr] lg:gap-12 lg:px-16">
 
                     <div>
                         <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#E57200]">
                             Tournament Team
                         </p>
 
-                        <h2 className="font-bebas mt-4 text-6xl uppercase leading-[0.86] tracking-wide md:text-7xl">
+                        <h2 className="font-bebas mt-4 text-5xl uppercase leading-[0.9] tracking-wide sm:text-6xl md:text-7xl">
                             Compete For
                             <br />
                             Virginia.
@@ -529,7 +529,7 @@ export default function AboutPage() {
                     </div>
 
 
-                    <div className="text-center">
+                    <div className="text-left lg:text-center">
                         <p className="font-bebas text-4xl uppercase leading-none md:text-5xl">
                             2023
                             <br />
@@ -538,7 +538,7 @@ export default function AboutPage() {
                             Champions
                         </p>
 
-                        <div className="mx-auto mt-5 h-[3px] w-16 bg-[#E57200]" />
+                        <div className="mt-5 h-[3px] w-16 bg-[#E57200] lg:mx-auto" />
                     </div>
 
                 </div>
@@ -550,14 +550,14 @@ export default function AboutPage() {
             {/* ====================================================== */}
 
             <section className="bg-[#0b2038] text-white">
-                <div className="mx-auto grid max-w-[1450px] items-center gap-10 px-6 py-14 md:px-10 lg:grid-cols-[1fr_auto] lg:px-16">
+                <div className="mx-auto grid max-w-[1450px] items-center gap-8 px-5 py-12 md:px-10 md:py-14 lg:grid-cols-[1fr_auto] lg:px-16">
 
                     <div>
                         <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#E57200]">
                             UVA Pickleball
                         </p>
 
-                        <h2 className="font-bebas mt-3 text-5xl uppercase leading-none md:text-6xl">
+                        <h2 className="font-bebas mt-3 text-5xl uppercase leading-none sm:text-6xl">
                             Ready To Play?
                         </h2>
 
@@ -569,18 +569,18 @@ export default function AboutPage() {
                     </div>
 
 
-                    <div className="flex flex-wrap gap-3">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap lg:justify-end">
 
                         <ScrollToSectionButton
                             targetId="how-to-join"
-                            className="inline-flex items-center gap-2 bg-[#E57200] px-8 py-4 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-[#c95f00]"
+                            className="inline-flex w-full items-center justify-center gap-2 bg-[#E57200] px-8 py-4 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-[#c95f00] sm:w-auto"
                         >
                             Join UVA Pickleball
                         </ScrollToSectionButton>
 
                         <Link
                             href="/announcements/tryoutdetails"
-                            className="inline-flex items-center border border-white/70 px-8 py-4 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-white hover:text-[#07192d]"
+                            className="inline-flex w-full items-center justify-center border border-white/70 px-8 py-4 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-white hover:text-[#07192d] sm:w-auto"
                         >
                             View Tryout Details
                         </Link>
@@ -607,12 +607,12 @@ function Stat({
     label: string;
 }) {
     return (
-        <div className="flex flex-col items-center justify-center border-white/20 px-4 py-5 text-center md:border-r md:last:border-r-0">
+        <div className="flex min-h-[112px] flex-col items-center justify-center border-white/20 px-3 py-5 text-center md:border-r md:px-4 md:last:border-r-0">
             <p className="font-bebas text-4xl text-[#E57200] md:text-5xl">
                 {number}
             </p>
 
-            <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.15em] text-white/80">
+            <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white/80 sm:tracking-[0.15em]">
                 {label}
             </p>
         </div>
@@ -632,7 +632,7 @@ function ActivityCard({
     return (
         <article className="overflow-hidden border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
 
-            <div className="relative aspect-[4/2.8]">
+            <div className="relative aspect-[16/10]">
                 <Image
                     src={image}
                     alt={title}
@@ -662,7 +662,7 @@ function CommunityImage({
     src: string;
 }) {
     return (
-        <div className="relative min-h-[160px] border-l border-t border-white/10 lg:min-h-0">
+        <div className="relative min-h-[120px] border-l border-t border-white/10 sm:min-h-[160px] lg:min-h-0">
             <Image
                 src={src}
                 alt="UVA Pickleball community"
@@ -717,7 +717,7 @@ function GroupCard({
             </div>
 
             {/* Image */}
-            <div className="relative aspect-[4/2.7]">
+            <div className="relative aspect-[16/10]">
                 <Image
                     src={image}
                     alt={title}
