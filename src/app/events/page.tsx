@@ -99,8 +99,8 @@ const events: ClubEvent[] = [
 export default function EventsPage() {
   return (
     <main className="bg-slate-50">
-      <section className="mx-auto max-w-7xl px-6 py-8">
-        <div className="relative mx-auto h-[390px] w-full overflow-hidden rounded-2xl md:h-[450px]">
+      <section className="mx-auto max-w-7xl px-5 py-6 md:px-6 md:py-8">
+        <div className="relative mx-auto min-h-[560px] w-full overflow-hidden rounded-2xl sm:min-h-[500px] md:h-[450px] md:min-h-0">
           <Image
             src="/images/events/TryOut2026.jpg"
             alt="UVA Pickleball Fall 2026 Tryouts"
@@ -112,7 +112,7 @@ export default function EventsPage() {
           {/* Dark overlay only on the left side */}
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent" />
 
-          <div className="absolute inset-0 flex items-center px-8 py-10 md:px-12 md:py-14">
+          <div className="absolute inset-0 flex items-center px-5 py-10 sm:px-8 md:px-12 md:py-14">
             <div className="w-full max-w-[520px]">
               <div className="mb-4 flex flex-wrap gap-2">
                 <span className="rounded-full bg-orange-600 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white md:text-xs">
@@ -124,13 +124,13 @@ export default function EventsPage() {
                 </span>
               </div>
 
-              <h1 className="font-hero text-6xl leading-[0.9] tracking-wide text-white md:text-7xl lg:text-8xl">
+              <h1 className="font-hero text-5xl leading-[0.9] tracking-wide text-white min-[380px]:text-6xl md:text-7xl lg:text-8xl">
                 WELCOME BACK,
                 <br />
                 HOOS.
               </h1>
 
-              <h2 className="mt-3 font-heading text-2xl font-bold uppercase leading-none tracking-wide text-orange-600 md:text-3xl">
+              <h2 className="mt-3 font-heading text-xl font-bold uppercase leading-tight tracking-wide text-orange-600 sm:text-2xl md:text-3xl">
                 Fall 2026 Tryouts
               </h2>
 
@@ -140,13 +140,13 @@ export default function EventsPage() {
                 Players of all skill levels are welcome.
               </p>
 
-              <div className="mt-6 flex flex-wrap gap-3">
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <ScrollToUpcomingEventsButton />
 
                 <Button
                   asChild
                   variant="secondary"
-                  className="h-10 rounded-md px-6 font-heading text-[11px] uppercase tracking-wide md:h-11 md:px-7"
+                  className="h-10 w-full rounded-md px-6 font-heading text-[11px] uppercase tracking-wide sm:w-auto md:h-11 md:px-7"
                 >
                   <Link href="/announcements/tryoutdetails">
                     View Tryout Details
@@ -158,7 +158,7 @@ export default function EventsPage() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-8 px-6 py-10 lg:grid-cols-[260px_1fr]">
+      <section className="mx-auto grid max-w-7xl gap-8 px-5 py-8 md:px-6 md:py-10 lg:grid-cols-[260px_1fr]">
         <aside className="hidden lg:block">
           <h2 className="font-heading text-lg font-bold">Filter Events</h2>
 
@@ -198,8 +198,8 @@ export default function EventsPage() {
         </aside>
 
         <div id="upcoming-events" className="scroll-mt-8">
-          <div className="mb-8 text-center">
-            <h2 className="font-heading text-4xl font-bold tracking-tight md:text-5xl">
+          <div className="mb-7 text-center md:mb-8">
+            <h2 className="font-heading text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
               Upcoming Events
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
@@ -207,49 +207,49 @@ export default function EventsPage() {
             </p>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2 md:gap-8">
             {events.map((event) => (
               <article
                 key={event.title}
                 className="overflow-hidden rounded-xl bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
               >
-                <div className="relative h-52">
+                <div className="relative h-44 sm:h-52">
                   <Image
                     src={event.image}
                     alt={event.title}
                     fill
                     className="object-cover"
                   />
-                  <span className="absolute left-4 top-4 rounded bg-orange-600 px-2 py-1 font-heading text-[10px] uppercase tracking-widest text-white">
+                  <span className="absolute left-3 top-3 rounded bg-orange-600 px-2 py-1 font-heading text-[10px] uppercase tracking-widest text-white sm:left-4 sm:top-4">
                     {event.type}
                   </span>
-                  <span className="absolute right-4 top-4 rounded bg-white px-2 py-1 text-xs font-bold text-slate-700">
+                  <span className="absolute right-3 top-3 rounded bg-white px-2 py-1 text-xs font-bold text-slate-700 sm:right-4 sm:top-4">
                     <Users className="mr-1 inline h-3 w-3" />
                     {event.attendees.length}/{event.capacity}
                   </span>
                 </div>
 
-                <div className="p-6">
-                  <h3 className="font-heading text-2xl font-bold tracking-tight">
+                <div className="p-5 sm:p-6">
+                  <h3 className="font-heading text-xl font-bold tracking-tight sm:text-2xl">
                     {event.title}
                   </h3>
 
                   <div className="mt-4 space-y-3 text-sm text-muted-foreground">
-                    <p className="flex items-center gap-2">
-                      <CalendarDays className="h-4 w-4 text-orange-600" />
+                    <p className="flex items-start gap-2">
+                      <CalendarDays className="mt-0.5 h-4 w-4 shrink-0 text-orange-600" />
                       {event.date}
                     </p>
-                    <p className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-orange-600" />
+                    <p className="flex items-start gap-2">
+                      <Clock className="mt-0.5 h-4 w-4 shrink-0 text-orange-600" />
                       {event.time}
                     </p>
-                    <p className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-orange-600" />
+                    <p className="flex items-start gap-2">
+                      <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-orange-600" />
                       {event.location}
                     </p>
                   </div>
 
-                  <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                  <div className="mt-6 grid gap-3 lg:grid-cols-2">
                     {event.status === "full" ? (
                       <Button
                         className="w-full bg-orange-600 font-heading uppercase tracking-wide hover:bg-orange-700"

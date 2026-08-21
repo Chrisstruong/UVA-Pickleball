@@ -60,18 +60,20 @@ const categoryStyles = {
   general: "border border-[#f97316] bg-white text-[#30218c]",
 };
 
+type ScheduleItem = (typeof schedule)[number];
+
 export default function SchedulePage() {
   return (
     <main className="bg-white text-[#111827]">
-      <section className="mx-auto max-w-[1450px] px-6 py-12 md:px-10 lg:px-16 lg:py-16">
+      <section className="mx-auto max-w-[1450px] px-5 py-10 md:px-10 md:py-12 lg:px-16 lg:py-16">
         {/* Intro */}
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex flex-col gap-7 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#b54b00]">
               Court Availability
             </p>
 
-            <h1 className="mt-3 text-5xl font-bold tracking-tight md:text-6xl">
+            <h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
               Practice{" "}
               <span className="bg-yellow-300 px-1">
                 Schedule
@@ -84,21 +86,27 @@ export default function SchedulePage() {
             </p>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2 lg:min-w-[440px]">
             <VenueCard name="Snyder" courts="Courts 4, 5, 9, & 10" />
             <VenueCard name="Perry Fishburne" courts="Courts 3-8" />
           </div>
         </div>
 
         {/* Legend */}
-        <div className="mt-9 flex flex-wrap gap-3">
+        <div className="mt-8 flex flex-wrap gap-3 md:mt-9">
           <LegendDot color="bg-[#f97316]" label="Tournament" />
           <LegendDot color="bg-[#30218c]" label="Social" />
           <LegendDot color="bg-white border border-[#f97316]" label="General" />
         </div>
 
         {/* Schedule */}
-        <div className="mt-6 overflow-x-auto rounded-xl border border-slate-200">
+        <div className="mt-6 grid gap-4 md:hidden">
+          {schedule.map((item) => (
+            <ScheduleCard key={`${item.day}-${item.time}`} item={item} />
+          ))}
+        </div>
+
+        <div className="mt-6 hidden overflow-x-auto rounded-xl border border-slate-200 md:block">
           <div className="min-w-[1000px]">
             <div className="grid grid-cols-[120px_repeat(7,1fr)] bg-slate-100">
               <div />
@@ -159,11 +167,11 @@ export default function SchedulePage() {
         </div>
 
         {/* Bottom cards */}
-        <div className="mt-12 grid gap-6 lg:grid-cols-2">
+        <div className="mt-10 grid gap-5 md:mt-12 lg:grid-cols-2 lg:gap-6">
           {/* Competitive CTA */}
-          <div className="relative overflow-hidden rounded-xl bg-[#e57200] p-8 text-white">
+          <div className="relative overflow-hidden rounded-xl bg-[#e57200] p-6 text-white md:p-8">
             <div className="relative z-10 max-w-md">
-              <h2 className="text-3xl font-bold">
+              <h2 className="text-2xl font-bold md:text-3xl">
                 Tournament Practice
               </h2>
 
@@ -179,8 +187,8 @@ export default function SchedulePage() {
           </div>
 
           {/* Social and General */}
-          <div className="rounded-xl bg-[#30218c] p-8 text-white">
-            <h2 className="text-3xl font-bold">
+          <div className="rounded-xl bg-[#30218c] p-6 text-white md:p-8">
+            <h2 className="text-2xl font-bold md:text-3xl">
               Social & General Play
             </h2>
 
@@ -212,12 +220,42 @@ function LegendDot({
   label: string;
 }) {
   return (
-    <div className="flex items-center gap-2 rounded-full bg-slate-50 px-4 py-2">
+    <div className="flex items-center gap-2 rounded-full bg-slate-50 px-3 py-2 sm:px-4">
       <div className={`h-2.5 w-2.5 rounded-full ${color}`} />
       <span className="text-[10px] font-bold uppercase tracking-wide text-slate-600">
         {label}
       </span>
     </div>
+  );
+}
+
+function ScheduleCard({ item }: { item: ScheduleItem }) {
+  return (
+    <article
+      className={`rounded-xl p-4 shadow-sm ${
+        categoryStyles[item.category as keyof typeof categoryStyles]
+      }`}
+    >
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.16em] opacity-80">
+            {item.day}
+          </p>
+
+          <h2 className="mt-1 text-xl font-bold">
+            {item.type}
+          </h2>
+        </div>
+
+        <p className="shrink-0 text-right text-xs font-bold uppercase leading-5">
+          {item.time}
+        </p>
+      </div>
+
+      <p className="mt-4 text-sm font-medium leading-6 opacity-90">
+        {item.title}
+      </p>
+    </article>
   );
 }
 
@@ -229,7 +267,7 @@ function VenueCard({
   courts: string;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl bg-slate-50 px-5 py-4">
+    <div className="flex items-center gap-3 rounded-xl bg-slate-50 px-4 py-4 sm:px-5">
       <MapPin className="h-5 w-5 shrink-0 text-[#0076b8]" />
 
       <div>

@@ -13,7 +13,7 @@ export default function ScrollToUpcomingEventsButton() {
     <Button
       type="button"
       onClick={handleClick}
-      className="h-10 rounded-md bg-orange-600 px-6 font-heading text-[11px] uppercase tracking-wide text-white hover:bg-orange-700 md:h-11 md:px-7"
+      className="h-10 w-full rounded-md bg-orange-600 px-6 font-heading text-[11px] uppercase tracking-wide text-white hover:bg-orange-700 sm:w-auto md:h-11 md:px-7"
     >
       Register Now
     </Button>
