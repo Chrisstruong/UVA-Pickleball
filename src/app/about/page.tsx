@@ -157,7 +157,7 @@ export default function AboutPage() {
                         </p>
 
                         <h2 className="font-bebas mt-3 text-5xl uppercase leading-none tracking-wide text-[#07192d] sm:text-6xl md:text-7xl">
-                            How To Join
+                            How To Join Fall 2026
                         </h2>
 
                         <div className="mx-auto mt-5 h-[3px] w-14 bg-[#E57200]" />
