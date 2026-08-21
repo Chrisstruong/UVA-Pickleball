@@ -52,8 +52,7 @@ export default function TryoutDetailsPage() {
 
                         {/* RIGHT SIDE — SCHEDULE */}
                         <div className="flex justify-center lg:justify-end">
-                            <div className="h-auto w-full object-cover">
-
+                            <div className="w-full max-w-[500px]">
                                 <div className="overflow-hidden border border-slate-200 bg-[#232D4B] shadow-sm">
                                     <img
                                         src="/images/2026tryoutschedule.jpg"
@@ -342,47 +341,44 @@ export default function TryoutDetailsPage() {
                     {/* EXPLANATION */}
                     {/* ====================================================== */}
 
-                    <div className="mt-16 border-t border-slate-100 pt-8">
-                        <div className="text-lg font-bold uppercase tracking-[0.12em] text-[#E57200] sm:text-xl sm:tracking-[0.16em]">
-
+                    {/* EXPLANATION */}
+                    <div className="mt-12 border-t border-slate-100 pt-8 sm:mt-16">
+                        <div className="grid gap-8 md:grid-cols-3">
                             {/* General */}
                             <div>
-                                <p className="text-[20px] font-bold uppercase tracking-[0.16em] text-[#E57200]">
+                                <p className="text-lg font-bold uppercase tracking-[0.12em] text-[#E57200] sm:text-xl sm:tracking-[0.16em]">
                                     General
                                 </p>
 
-                                <p className="mt-2 text-md leading-6 text-slate-600">
-                                    Players may be placed directly into General after
-                                    the first tryout.
+                                <p className="mt-2 text-sm leading-6 text-slate-600 sm:text-base">
+                                    Players may be placed directly into General after the first
+                                    tryout.
                                 </p>
                             </div>
-
 
                             {/* Social */}
                             <div>
-                                <p className="text-[20px] font-bold uppercase tracking-[0.16em] text-[#E57200]">
+                                <p className="text-lg font-bold uppercase tracking-[0.12em] text-[#E57200] sm:text-xl sm:tracking-[0.16em]">
                                     Social
                                 </p>
 
-                                <p className="mt-2 text-md leading-6 text-slate-600">
-                                    Players may be placed directly into Social after
-                                    the first tryout.
+                                <p className="mt-2 text-sm leading-6 text-slate-600 sm:text-base">
+                                    Players may be placed directly into Social after the first
+                                    tryout.
                                 </p>
                             </div>
-
 
                             {/* Tournament */}
                             <div>
-                                <p className="text-[20px] font-bold uppercase tracking-[0.16em] text-[#E57200]">
+                                <p className="text-lg font-bold uppercase tracking-[0.12em] text-[#E57200] sm:text-xl sm:tracking-[0.16em]">
                                     Tournament
                                 </p>
 
-                                <p className="mt-2 text-md leading-6 text-slate-600">
-                                    Players who advance from the first tryout are invited
-                                    to callbacks. Selected players join the Tournament Team.
+                                <p className="mt-2 text-sm leading-6 text-slate-600 sm:text-base">
+                                    Players who advance from the first tryout are invited to
+                                    callbacks. Selected players join the Tournament Team.
                                 </p>
                             </div>
-
                         </div>
                     </div>
 
