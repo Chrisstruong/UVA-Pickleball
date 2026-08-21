@@ -10,7 +10,7 @@ export default function TryoutDetailsPage() {
         <main className="bg-white text-[#111827]">
             {/* Hero */}
             <section className="border-b bg-gradient-to-b from-white to-slate-50">
-                <div className="mx-auto max-w-[1450px] px-6 py-16 md:px-10 lg:px-16 lg:py-24">
+                <div className="mx-auto max-w-[1450px] px-4 py-12 sm:px-6 sm:py-16 md:px-10 lg:px-16 lg:py-24">
 
                     <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
 
@@ -21,7 +21,7 @@ export default function TryoutDetailsPage() {
                                 Fall 2026 · Tryouts
                             </p>
 
-                            <h1 className="font-bebas mt-5 text-6xl uppercase leading-[0.95] tracking-wide sm:text-7xl lg:text-[88px]">
+                            <h1 className="font-bebas mt-4 text-5xl uppercase leading-[0.95] tracking-wide sm:mt-5 sm:text-6xl md:text-7xl lg:text-[88px]">
                                 Tryout Details
                             </h1>
 

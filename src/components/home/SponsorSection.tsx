@@ -94,28 +94,29 @@ export default function SponsorSection() {
           </h3>
         </div>
 
-        <div className="mt-10 grid grid-cols-2 gap-px bg-white/20 sm:mt-14 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7">
-          {teams.map((team) => (
-            <div
-              key={team.name}
-              className="flex min-h-32 flex-col items-center justify-center bg-black px-3 py-5 text-center sm:px-4"
-            >
-              <div className="mb-3 flex h-14 w-14 items-center justify-center sm:mb-4 sm:h-16 sm:w-16">
-                <Image
-                  src={team.logo}
-                  alt={team.name}
-                  width={80}
-                  height={80}
-                  className="max-h-full w-auto max-w-full object-contain"
-                />
-              </div>
+        <div className="mt-10 grid grid-cols-2 sm:mt-14 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7">
+  {teams.map((team) => (
+    <div
+      key={team.name}
+      className="flex min-h-32 flex-col items-center justify-center border-b border-r border-white/20 bg-black px-3 py-5 text-center sm:px-4"
+    >
+      <div className="mb-3 flex h-14 w-14 items-center justify-center sm:mb-4 sm:h-16 sm:w-16">
+        <Image
+          src={team.logo}
+          alt={team.name}
+          width={80}
+          height={80}
+          className="max-h-full w-auto max-w-full object-contain"
+        />
+      </div>
 
-              <p className="text-xs font-semibold leading-5 text-white sm:text-sm">
-                {team.name}
-              </p>
-            </div>
-          ))}
-        </div>
+      <p className="text-xs font-semibold leading-5 text-white sm:text-sm">
+        {team.name}
+      </p>
+    </div>
+  ))}
+</div>
+
       </div>
     </section>
   );
