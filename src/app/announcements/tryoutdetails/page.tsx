@@ -33,24 +33,26 @@ export default function TryoutDetailsPage() {
                                 </p>
                             </div>
 
-                            <div className="mt-8 flex flex-wrap gap-3">
+                            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                                 <a
                                     href="https://docs.google.com/spreadsheets/d/1qt90UR_xtAeMSM6AJRSKwr4VOrTozdMEPMNmA7wGLqk/edit?gid=315280905#gid=315280905"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-2 rounded-md bg-[#e57200] px-6 py-3 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-[#c95f00]"
+                                    className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-[#e57200] px-6 py-3 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-[#c95f00] sm:w-auto"
                                 >
                                     Register for Tryouts
                                     <ArrowRight className="h-4 w-4" />
                                 </a>
 
-                                <ScrollToProcessButton />
+                                <div className="w-full sm:w-auto">
+                                    <ScrollToProcessButton />
+                                </div>
                             </div>
                         </div>
 
                         {/* RIGHT SIDE — SCHEDULE */}
                         <div className="flex justify-center lg:justify-end">
-                            <div className="w-full max-w-[500px]">
+                            <div className="h-auto w-full object-cover">
 
                                 <div className="overflow-hidden border border-slate-200 bg-[#232D4B] shadow-sm">
                                     <img
@@ -69,13 +71,13 @@ export default function TryoutDetailsPage() {
 
             {/* Three Ways */}
             <section className="bg-white">
-                <div className="mx-auto max-w-[1450px] px-6 py-16 md:px-10 lg:px-16">
+                <div className="mx-auto max-w-[1450px] px-4 py-12 sm:px-6 sm:py-16 md:px-10 lg:px-16">
                     <div className="text-center">
                         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
                             Three Ways To Play
                         </p>
 
-                        <h2 className="font-bebas mt-2 text-4xl uppercase tracking-wide">
+                        <h2 className="font-bebas mt-2 text-3xl uppercase tracking-wide sm:text-4xl">
                             Find Your Group
                         </h2>
 
@@ -99,12 +101,12 @@ export default function TryoutDetailsPage() {
             </section>
 
             {/* Flow chart */}
-            <section id="process" className="w-full bg-white py-16 md:py-24">
+            <section id="process" className="w-full bg-white py-12 sm:py-16 md:py-24">
                 <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
 
                     {/* Header */}
                     <div className="mb-14 text-center">
-                        <h2 className="mb-2 text-5xl font-semibold uppercase tracking-[0.2em] text-[#E57200]">
+                        <h2 className="mb-2 text-3xl font-semibold uppercase tracking-[0.12em] text-[#E57200] sm:text-4xl sm:tracking-[0.16em] md:text-5xl md:tracking-[0.2em]">
                             Tryout Process
                         </h2>
 
@@ -341,7 +343,7 @@ export default function TryoutDetailsPage() {
                     {/* ====================================================== */}
 
                     <div className="mt-16 border-t border-slate-100 pt-8">
-                        <div className="grid gap-8 md:grid-cols-3">
+                        <div className="text-lg font-bold uppercase tracking-[0.12em] text-[#E57200] sm:text-xl sm:tracking-[0.16em]">
 
                             {/* General */}
                             <div>
@@ -389,7 +391,7 @@ export default function TryoutDetailsPage() {
 
             {/* FAQ */}
             <section className="bg-white">
-                <div className="mx-auto max-w-4xl px-6 py-20 md:px-10">
+                <div className="mx-auto max-w-4xl px-4 py-14 sm:px-6 sm:py-16 md:px-10 md:py-20">
 
                     <div className="text-center">
                         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#e57200]">
@@ -438,14 +440,13 @@ export default function TryoutDetailsPage() {
                 </div>
             </section>
 
-            {/* Bottom CTA */}
             <section className="bg-[#111827]">
-                <div className="mx-auto max-w-[1450px] px-6 py-16 text-center text-white md:px-10 lg:px-16">
+                <div className="mx-auto max-w-[1450px] px-4 py-14 text-center text-white sm:px-6 sm:py-16 md:px-10 lg:px-16">
                     <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#e57200]">
                         Fall 2026 Tryouts
                     </p>
 
-                    <h2 className="font-bebas mt-3 text-5xl uppercase tracking-wide">
+                    <h2 className="font-bebas mt-3 text-3xl uppercase tracking-wide sm:text-4xl md:text-5xl">
                         Ready To Get On The Court?
                     </h2>
 
@@ -458,7 +459,7 @@ export default function TryoutDetailsPage() {
                         href="https://docs.google.com/spreadsheets/d/1qt90UR_xtAeMSM6AJRSKwr4VOrTozdMEPMNmA7wGLqk/edit?gid=315280905#gid=315280905"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-8 inline-flex items-center gap-2 rounded-md bg-[#e57200] px-7 py-3 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-[#c95f00]"
+                        className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-md bg-[#e57200] px-7 py-3 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-[#c95f00] sm:w-auto"
                     >
                         Register for Tryouts
                         <ArrowRight className="h-4 w-4" />
@@ -553,12 +554,12 @@ function FAQ({
 }) {
     return (
         <details className="group rounded-lg border border-slate-200 bg-white">
-            <summary className="flex cursor-pointer list-none items-center justify-between px-5 py-4">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-4 sm:px-5">
                 <span className="text-sm font-semibold">
                     {question}
                 </span>
 
-                <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
+                <ChevronDown className="h-4 w-4 shrink-0 transition-transform group-open:rotate-180" />
             </summary>
 
             <div className="border-t border-slate-100 px-5 py-4">
@@ -600,22 +601,26 @@ function ProcessBox({
     return (
         <div
             className="
-                flex
-                min-h-[78px]
-                w-full
-                max-w-[250px]
-                items-center
-                justify-center
-                border
-                border-neutral-300
-                bg-[#F3F3F3]
-                px-5
-                py-4
-                text-center
-                shadow-[0_2px_8px_rgba(0,0,0,0.05)]
-            "
+        flex
+        min-h-[68px]
+        w-full
+        max-w-[260px]
+        items-center
+        justify-center
+        border
+        border-neutral-300
+        bg-[#F3F3F3]
+        px-4
+        py-3
+        text-center
+        shadow-[0_2px_8px_rgba(0,0,0,0.05)]
+        sm:min-h-[78px]
+        sm:max-w-[280px]
+        sm:px-5
+        sm:py-4
+      "
         >
-            <span className="font-bebas text-xl uppercase tracking-[0.04em] text-black lg:text-2xl">
+            <span className="font-bebas text-lg uppercase tracking-[0.04em] text-black sm:text-xl lg:text-2xl">
                 {children}
             </span>
         </div>
@@ -635,19 +640,24 @@ function FinalBox({
     return (
         <div
             className="
-                flex
-                min-h-[78px]
-                w-full
-                items-center
-                justify-center
-                bg-[#E57200]
-                px-5
-                py-4
-                text-center
-                shadow-[0_3px_10px_rgba(0,0,0,0.10)]
-            "
+        flex
+        min-h-[68px]
+        w-full
+        max-w-[260px]
+        items-center
+        justify-center
+        bg-[#E57200]
+        px-4
+        py-3
+        text-center
+        shadow-[0_3px_10px_rgba(0,0,0,0.10)]
+        sm:min-h-[78px]
+        sm:max-w-[280px]
+        sm:px-5
+        sm:py-4
+      "
         >
-            <span className="font-bebas text-xl uppercase tracking-[0.04em] text-white lg:text-2xl">
+            <span className="font-bebas text-lg uppercase tracking-[0.04em] text-white sm:text-xl lg:text-2xl">
                 {children}
             </span>
         </div>
