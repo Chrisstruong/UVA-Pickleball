@@ -26,7 +26,7 @@ const players = [
     major: "TBD",
     dupr: "4.34",
     team: "Tournament Team",
-    hometown: "Charlottesvile, VA",
+    hometown: "Charlottesville, VA",
     image: "/images/team/Amelie.png",
   },
   {
@@ -63,37 +63,37 @@ const players = [
 export default function TeamPage() {
   return (
     <main className="bg-white text-[#111827]">
-      <section className="mx-auto max-w-[1450px] px-6 py-12 md:px-10 lg:px-16 lg:py-16">
+      <section className="mx-auto max-w-[1450px] px-5 py-10 md:px-10 md:py-12 lg:px-16 lg:py-16">
 
         {/* Roster Header */}
-        <div className="mb-8 flex items-end justify-between">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#e57200]">
+        <div className="mb-7 flex flex-col gap-2 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+          <div className="min-w-0">
+            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#e57200] sm:text-xs">
               2026–27 Roster
             </p>
 
-            <h1 className="font-bebas mt-2 text-5xl uppercase tracking-wide">
+            <h1 className="font-bebas mt-2 text-5xl uppercase leading-none tracking-wide sm:text-6xl">
               Meet the Team
             </h1>
           </div>
         </div>
 
         {/* Tryout / Roster Update */}
-        <div className="mb-10 overflow-hidden rounded-xl border border-[#e57200]/20 bg-[#fff8f2]">
-          <div className="flex flex-col gap-5 px-6 py-6 sm:flex-row sm:items-center sm:justify-between md:px-8">
-            <div className="flex items-start gap-4">
+        <div className="mb-9 overflow-hidden rounded-xl border border-[#e57200]/20 bg-[#fff8f2] sm:mb-10">
+          <div className="flex flex-col gap-5 px-5 py-6 sm:flex-row sm:items-center sm:justify-between md:px-8">
+            <div className="flex flex-col gap-4 min-[420px]:flex-row min-[420px]:items-start">
               {/* Icon */}
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#e57200]/10">
                 <Users className="h-5 w-5 text-[#e57200]" />
               </div>
 
               {/* Text */}
-              <div>
+              <div className="min-w-0">
                 <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#e57200]">
                   Roster Update
                 </p>
 
-                <h2 className="mt-1 text-xl font-bold tracking-tight text-[#111827]">
+                <h2 className="mt-1 text-lg font-bold leading-tight tracking-tight text-[#111827] sm:text-xl">
                   New tournament and social players coming soon
                 </h2>
 
@@ -104,7 +104,7 @@ export default function TeamPage() {
               </div>
             </div>
 
-            <div className="shrink-0 rounded-full border border-[#e57200]/20 bg-white px-4 py-2">
+            <div className="w-fit shrink-0 rounded-full border border-[#e57200]/20 bg-white px-4 py-2">
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#e57200]">
                 Tryouts Pending
               </span>
@@ -113,38 +113,36 @@ export default function TeamPage() {
         </div>
 
         {/* Players */}
-        <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(240px,300px))] gap-x-5 gap-y-9">
           {players.map((player) => (
-            <article key={player.name} className="group">
-
-              {/* Player Photo */}
-              <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-slate-100">
+            <article key={player.name} className="group w-full">
+              <div className="relative aspect-[5/6] w-full overflow-hidden rounded-lg bg-slate-100">
                 <Image
                   src={player.image}
                   alt={player.name}
                   fill
+                  sizes="(max-width: 520px) 100vw, 300px"
                   className="object-cover transition duration-300 group-hover:scale-[1.02]"
                 />
 
-                {/* Team Label */}
-                <div className="absolute left-4 top-4 bg-[#e57200] px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+                <div className="absolute left-3 top-3 bg-[#e57200] px-2.5 py-1 text-[9px] font-bold uppercase tracking-wide text-white sm:left-4 sm:top-4 sm:px-3 sm:text-[10px]">
                   {player.team}
                 </div>
               </div>
 
               {/* Player Info */}
               <div className="border-b border-slate-200 py-4">
-                <h2 className="text-xl font-bold tracking-tight">
+                <h2 className="text-lg font-bold tracking-tight sm:text-xl">
                   {player.name}
                 </h2>
 
-                <div className="mt-2 flex items-center gap-2 text-sm text-slate-600">
+                <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-600">
                   <span>{player.year}</span>
                   <span className="text-slate-300">•</span>
                   <span>{player.major}</span>
                 </div>
 
-                <div className="mt-4 grid grid-cols-2 gap-4">
+                <div className="mt-4 grid grid-cols-1 gap-4 min-[360px]:grid-cols-2">
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                       DUPR
@@ -160,7 +158,7 @@ export default function TeamPage() {
                       Hometown
                     </p>
 
-                    <p className="mt-1 text-sm font-semibold">
+                    <p className="mt-1 text-sm font-semibold leading-5">
                       {player.hometown}
                     </p>
                   </div>
