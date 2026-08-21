@@ -203,7 +203,7 @@ export default function AboutPage() {
 
                                 <div className="mt-auto pt-10">
                                     <a
-                                        href="#"
+                                        href="https://docs.google.com/spreadsheets/d/1qt90UR_xtAeMSM6AJRSKwr4VOrTozdMEPMNmA7wGLqk/edit?gid=315280905#gid=315280905"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="inline-flex items-center gap-2 bg-[#E57200] px-5 py-3 text-[15px] font-bold uppercase tracking-[0.12em] text-white transition hover:bg-[#c95f00]"
@@ -442,7 +442,7 @@ export default function AboutPage() {
                                     "Equipment Provided",
                                     "Tournament opportunities"
                                 ]}
-                                footer="No Tryout Required"
+                                footer="Tryout Required"
                             />
 
                             <GroupCard

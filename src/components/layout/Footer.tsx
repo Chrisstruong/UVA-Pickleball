@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Mail } from "lucide-react";
 import { FaInstagram } from "react-icons/fa";
+import { SiGroupme } from "react-icons/si";
 
 const quickLinks = [
     {
@@ -47,6 +48,11 @@ const connectLinks = [
         label: "Email",
         href: "mailto:pickleatuva@gmail.com",
         icon: Mail,
+    },
+    {
+        label: "GroupMe",
+        href: "https://web.groupme.com/join_group/116766680/noCsdGoz",
+        icon: SiGroupme
     }
 ]
 

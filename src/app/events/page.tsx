@@ -15,26 +15,86 @@ type ClubEvent = {
   capacity: number;
   image: string;
   status: string;
+  signupUrl?: string;
   slug?: string;
 };
 
 const events: ClubEvent[] = [
   {
-    title: "Fall 2026 Tryout",
+    title: "Fall 2026 Tryout Day 1",
     type: "Tryout",
-    date: "08/31 - 09/05",
+    date: "Monday 08/31",
     time: "Your preference",
-    location: "Snyder Tennis Center",
+    location: "Snyder Tennis Center, Court 9",
     attendees: ["Ava Chen", "Marcus Lee", "Sofia Patel", "Ethan Brooks"],
     capacity: 504,
     image: "/images/events/Gengar.png",
     status: "open",
+    signupUrl: "https://docs.google.com/spreadsheets/d/1qt90UR_xtAeMSM6AJRSKwr4VOrTozdMEPMNmA7wGLqk/edit?gid=315280905#gid=315280905"
+  },
+  {
+    title: "Fall 2026 Tryout Day 2",
+    type: "Tryout",
+    date: "Tuesday 09/01",
+    time: "Your preference",
+    location: "Snyder Tennis Center, Court 9",
+    attendees: ["Ava Chen", "Marcus Lee", "Sofia Patel", "Ethan Brooks"],
+    capacity: 504,
+    image: "/images/events/Gengar.png",
+    status: "open",
+    signupUrl: "https://docs.google.com/spreadsheets/d/1qt90UR_xtAeMSM6AJRSKwr4VOrTozdMEPMNmA7wGLqk/edit?gid=1509728370#gid=1509728370"
+  },
+  {
+    title: "Fall 2026 Tryout Day 3",
+    type: "Tryout",
+    date: "Wednesday 09/02",
+    time: "Your preference",
+    location: "Snyder Tennis Center, Court 9",
+    attendees: ["Ava Chen", "Marcus Lee", "Sofia Patel", "Ethan Brooks"],
+    capacity: 504,
+    image: "/images/events/Snorlax.png",
+    status: "open",
+    signupUrl: "https://docs.google.com/spreadsheets/d/1qt90UR_xtAeMSM6AJRSKwr4VOrTozdMEPMNmA7wGLqk/edit?gid=1228192920#gid=1228192920",
+  },
+  {
+    title: "Fall 2026 Tryout Day 4",
+    type: "Tryout",
+    date: "Thursday 09/03",
+    time: "Your preference",
+    location: "Snyder Tennis Center, Court 9",
+    attendees: ["Ava Chen", "Marcus Lee", "Sofia Patel", "Ethan Brooks"],
+    capacity: 504,
+    image: "/images/events/Snorlax.png",
+    status: "open",
+    signupUrl:"https://docs.google.com/spreadsheets/d/1qt90UR_xtAeMSM6AJRSKwr4VOrTozdMEPMNmA7wGLqk/edit?gid=677840540#gid=677840540"
+  },
+  {
+    title: "Fall 2026 Tryout Day 5",
+    type: "Tryout",
+    date: "Friday 09/04",
+    time: "Your preference",
+    location: "Snyder Tennis Center, Court 9",
+    attendees: ["Ava Chen", "Marcus Lee", "Sofia Patel", "Ethan Brooks"],
+    capacity: 504,
+    image: "/images/events/Pikachu.png",
+    status: "open",
+    signupUrl: "https://docs.google.com/spreadsheets/d/1qt90UR_xtAeMSM6AJRSKwr4VOrTozdMEPMNmA7wGLqk/edit?gid=1648291452#gid=1648291452"
+  },
+  {
+    title: "Fall 2026 Tryout Day 6",
+    type: "Tryout",
+    date: "Saturday 09/05",
+    time: "Your preference",
+    location: "Snyder Tennis Center, Court 9 ",
+    attendees: ["Ava Chen", "Marcus Lee", "Sofia Patel", "Ethan Brooks"],
+    capacity: 504,
+    image: "/images/events/Pikachu.png",
+    status: "open",
+    signupUrl: "https://docs.google.com/spreadsheets/d/1qt90UR_xtAeMSM6AJRSKwr4VOrTozdMEPMNmA7wGLqk/edit?gid=2067550300#gid=2067550300"
   },
   
 ];
 
-const signupUrl =
-  "https://docs.google.com/spreadsheets/d/1qt90UR_xtAeMSM6AJRSKwr4VOrTozdMEPMNmA7wGLqk/edit?gid=315280905#gid=315280905";
 
 export default function EventsPage() {
   return (
@@ -203,7 +263,7 @@ export default function EventsPage() {
                         className="w-full bg-orange-600 font-heading uppercase tracking-wide hover:bg-orange-700"
                       >
                         <a
-                          href={signupUrl}
+                          href={event.signupUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                         >

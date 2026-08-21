@@ -1,4 +1,3 @@
-import Link from "next/link";
 import ScrollToProcessButton from "@/components/ScrollToProcessButton";
 import {
     ArrowRight,
@@ -35,13 +34,15 @@ export default function TryoutDetailsPage() {
                             </div>
 
                             <div className="mt-8 flex flex-wrap gap-3">
-                                <Link
-                                    href="/join"
+                                <a
+                                    href="https://docs.google.com/spreadsheets/d/1qt90UR_xtAeMSM6AJRSKwr4VOrTozdMEPMNmA7wGLqk/edit?gid=315280905#gid=315280905"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className="inline-flex items-center gap-2 rounded-md bg-[#e57200] px-6 py-3 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-[#c95f00]"
                                 >
                                     Register for Tryouts
                                     <ArrowRight className="h-4 w-4" />
-                                </Link>
+                                </a>
 
                                 <ScrollToProcessButton />
                             </div>
@@ -428,7 +429,7 @@ export default function TryoutDetailsPage() {
 
                         <FAQ
                             question="What happens if I'm not selected at callbacks?"
-                            answer="Players who are not selected for the Tournament Team can still participate in UVA Pickleball through the club's other playing opportunities."
+                            answer="You directly become a social member."
                         />
 
 
@@ -453,13 +454,15 @@ export default function TryoutDetailsPage() {
                         in UVA Pickleball.
                     </p>
 
-                    <Link
-                        href="/join"
+                    <a
+                        href="https://docs.google.com/spreadsheets/d/1qt90UR_xtAeMSM6AJRSKwr4VOrTozdMEPMNmA7wGLqk/edit?gid=315280905#gid=315280905"
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="mt-8 inline-flex items-center gap-2 rounded-md bg-[#e57200] px-7 py-3 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-[#c95f00]"
                     >
                         Register for Tryouts
                         <ArrowRight className="h-4 w-4" />
-                    </Link>
+                    </a>
                 </div>
             </section>
         </main>
