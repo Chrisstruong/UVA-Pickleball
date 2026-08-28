@@ -1,7 +1,7 @@
+import Image from "next/image";
 import ScrollToProcessButton from "@/components/ScrollToProcessButton";
 import {
     ArrowRight,
-    Check,
     ChevronDown,
 } from "lucide-react";
 
@@ -54,9 +54,11 @@ export default function TryoutDetailsPage() {
                         <div className="flex justify-center lg:justify-end">
                             <div className="w-full max-w-[500px]">
                                 <div className="overflow-hidden border border-slate-200 bg-[#232D4B] shadow-sm">
-                                    <img
+                                    <Image
                                         src="/images/2026tryoutschedule.jpg"
                                         alt="Fall 2026 UVA Pickleball tryout schedule"
+                                        width={1080}
+                                        height={1350}
                                         className="h-auto w-full object-cover"
                                     />
                                 </div>
@@ -491,53 +493,6 @@ function TierCard({
     );
 }
 
-/* ---------------------------------- */
-/* Summary Card                       */
-/* ---------------------------------- */
-
-function SummaryCard({
-    title,
-    flow,
-}: {
-    title: string;
-    flow: string;
-}) {
-    return (
-        <div className="rounded-xl border border-slate-200 bg-white p-6">
-            <h3 className="text-sm font-bold uppercase tracking-wide text-[#e57200]">
-                {title}
-            </h3>
-
-            <p className="mt-3 text-lg font-semibold">
-                {flow}
-            </p>
-        </div>
-    );
-}
-
-/* ---------------------------------- */
-/* Check Item                         */
-/* ---------------------------------- */
-
-function CheckItem({
-    children,
-}: {
-    children: React.ReactNode;
-}) {
-    return (
-        <div className="flex items-start gap-3">
-            <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#e57200]/10">
-                <Check className="h-3 w-3 text-[#e57200]" />
-            </div>
-
-            <p className="text-sm text-slate-700">
-                {children}
-            </p>
-        </div>
-    );
-}
-
-/* ---------------------------------- */
 /* FAQ                                */
 /* ---------------------------------- */
 

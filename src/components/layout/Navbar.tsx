@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { CircleUser, Menu, X } from "lucide-react";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { CircleUser, LogOut, Menu, X } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+
 
 const links = [
   { name: "Home", href: "/" },
@@ -19,13 +21,49 @@ const links = [
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const supabase = useMemo(() => createClient(), []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+
+    setIsLoggedIn(false);
+    setIsMenuOpen(false);
+
+    router.push("/");
+    router.refresh();
+  };
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      setIsLoggedIn(!!user);
+    };
+
+    checkUser();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session?.user);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
 
   return (
     <header className="sticky top-0 z-50 border-b bg-white">
       <div className="mx-auto flex h-20 max-w-[1400px] items-center justify-between px-4 sm:px-6 lg:h-24">
         {/* Logo */}
-        <Link href="/" className="flex min-w-0 items-center gap-3 sm:gap-5">
+        <Link href="/" className="flex min-w-0 shrink-0 items-center gap-3 sm:gap-5">
           <Image
             src="/images/logo.svg"
             alt="UVA Pickleball Logo"
@@ -39,7 +77,7 @@ export default function Navbar() {
           <div className="hidden h-10 w-px bg-gray-300 sm:block lg:h-12" />
 
           {/* Club Name */}
-          <span className="hidden text-sm font-bold leading-tight tracking-wide text-black sm:block lg:text-xl">
+          <span className="hidden text-sm font-bold leading-tight tracking-wide text-black sm:block xl:text-xl">
             UVA PICKLEBALL CLUB
             <br />
             Fall 2026
@@ -47,7 +85,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-5 text-sm font-medium lg:flex xl:gap-8">
+        <nav className="mx-5 hidden min-w-0 flex-1 items-center justify-center gap-3 text-xs font-medium lg:flex xl:gap-6 xl:text-sm">
           {links.map((link) => {
             const isActive =
               link.href === "/"
@@ -58,11 +96,10 @@ export default function Navbar() {
               <Link
                 key={link.name}
                 href={link.href}
-                className={`relative py-2 transition-colors ${
-                  isActive
-                    ? "text-[#e57200]"
-                    : "text-black hover:text-[#e57200]"
-                }`}
+                className={`relative py-2 transition-colors ${isActive
+                  ? "text-[#e57200]"
+                  : "text-black hover:text-[#e57200]"
+                  }`}
               >
                 {link.name}
               </Link>
@@ -71,15 +108,39 @@ export default function Navbar() {
         </nav>
 
         {/* Right Side */}
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex shrink-0 items-center gap-1 sm:gap-2">
           {/* Account */}
-          <Link
-            href="/login"
-            aria-label="Account"
-            className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-slate-100"
-          >
-            <CircleUser className="h-5 w-5" />
-          </Link>
+          {isLoggedIn ? (
+            <div className="flex items-center gap-1">
+              <Link
+                href="/profile"
+                aria-label="My Profile"
+                title="My Profile"
+                className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-slate-100"
+              >
+                <CircleUser className="h-5 w-5" />
+              </Link>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                aria-label="Log Out"
+                title="Log Out"
+                className="flex h-10 w-10 items-center justify-center rounded-full text-[#07192d] transition hover:bg-slate-100 hover:text-[#E57200]"
+              >
+                <LogOut className="h-5 w-5" />
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              aria-label="Log In"
+              title="Log In"
+              className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-slate-100"
+            >
+              <CircleUser className="h-5 w-5" />
+            </Link>
+          )}
 
           {/* Mobile Menu Button */}
           <button
@@ -113,16 +174,36 @@ export default function Navbar() {
                   key={link.name}
                   href={link.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`border-b border-slate-100 px-2 py-3 text-base font-medium transition-colors last:border-b-0 ${
-                    isActive
-                      ? "text-[#e57200]"
-                      : "text-black hover:text-[#e57200]"
-                  }`}
+                  className={`border-b border-slate-100 px-2 py-3 text-base font-medium transition-colors last:border-b-0 ${isActive
+                    ? "text-[#e57200]"
+                    : "text-black hover:text-[#e57200]"
+                    }`}
                 >
                   {link.name}
                 </Link>
               );
             })}
+            <div className="mt-3 border-t border-slate-100 pt-3">
+              {isLoggedIn ? (
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="flex w-full items-center gap-3 rounded-md px-2 py-3 text-left text-base font-medium text-[#07192d] transition hover:bg-slate-50 hover:text-[#E57200]"
+                >
+                  <LogOut className="h-5 w-5" />
+                  Log Out
+                </button>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-3 rounded-md px-2 py-3 text-base font-medium text-[#07192d] transition hover:bg-slate-50 hover:text-[#E57200]"
+                >
+                  <CircleUser className="h-5 w-5" />
+                  Log In
+                </Link>
+              )}
+            </div>
           </div>
         </nav>
       )}
