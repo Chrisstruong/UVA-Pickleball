@@ -14,15 +14,15 @@ export default function ConfirmPage() {
         </h1>
 
         <p className="mt-4 leading-6 text-gray-600">
-          Successfully verified. You can now view
-          your profile and confirm your account status.
+          Your UVA email has been verified. Sign in to view your profile and
+          confirm your account status.
         </p>
 
         <Link
-          href="/profile"
+          href="/login"
           className="mt-7 inline-block rounded-lg bg-[#E57200] px-6 py-3 font-semibold text-white transition hover:bg-[#c96300]"
         >
-          View Profile
+          Go to Login
         </Link>
       </div>
     </main>
