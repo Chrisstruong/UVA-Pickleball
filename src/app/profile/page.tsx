@@ -20,6 +20,7 @@ export default function ProfilePage() {
     const supabase = useMemo(() => createClient(), []);
 
     const [email, setEmail] = useState("");
+    const [emailVerified, setEmailVerified] = useState(false);
     const [loading, setLoading] = useState(true);
 
     // Temporary values until we connect the profiles table
@@ -49,7 +50,7 @@ export default function ProfilePage() {
             const { data: profile, error } = await supabase
                 .from("profiles")
                 .select(
-                    "full_name, avatar_url, club_group, membership_status, tryout_result"
+                    "full_name, avatar_url, club_group, membership_status, tryout_result, email_verified"
                 )
                 .eq("id", user.id)
                 .single();
@@ -65,7 +66,7 @@ export default function ProfilePage() {
             setGroup(profile.club_group ?? "");
             setMembershipStatus(profile.membership_status ?? "Pending");
             setTryoutResult(profile.tryout_result ?? "");
-
+            setEmailVerified(profile.email_verified ?? false);
             setLoading(false);
         };
 
@@ -140,9 +141,14 @@ export default function ProfilePage() {
 
                             {/* Badges */}
                             <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-                                <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-emerald-700">
+                                <div
+                                    className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] ${emailVerified
+                                        ? "bg-emerald-50 text-emerald-700"
+                                        : "bg-amber-50 text-amber-700"
+                                        }`}
+                                >
                                     <BadgeCheck className="h-3.5 w-3.5" />
-                                    Verified UVA
+                                    {emailVerified ? "Verified UVA" : "Email Unverified"}
                                 </div>
 
                                 {group ? (
@@ -212,6 +218,14 @@ export default function ProfilePage() {
 
                         {/* ACCOUNT INFORMATION */}
                         <section>
+                            {!emailVerified && (
+                                <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm leading-6 text-amber-800">
+                                    Your account is active, but your UVA email is not verified yet.
+                                    Check your inbox and click the Supabase confirmation link to
+                                    update your account status.
+                                </div>
+                            )}
+
                             <div className="mb-4 flex items-center gap-3">
                                 <Users className="h-5 w-5 text-[#E57200]" />
 
@@ -230,8 +244,8 @@ export default function ProfilePage() {
                                 <InfoCard
                                     icon={<ShieldCheck className="h-4 w-4" />}
                                     label="Account Status"
-                                    value="Verified"
-                                    dotClass="bg-emerald-600"
+                                    value={emailVerified ? "Verified" : "Not Verified"}
+                                    dotClass={emailVerified ? "bg-emerald-600" : "bg-amber-500"}
                                 />
 
                                 <InfoCard

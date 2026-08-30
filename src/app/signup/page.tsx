@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { CheckCircle2 } from "lucide-react";
 
@@ -25,6 +26,7 @@ const graduationYears = ["2027", "2028", "2029", "2030", "2031", "2032"];
 
 export default function SignupPage() {
 
+  const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -36,7 +38,6 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const isFormValid =
@@ -54,7 +55,6 @@ export default function SignupPage() {
     e.preventDefault();
 
     setError("");
-    setSuccess(false);
 
     const normalizedEmail = email.trim().toLowerCase();
 
@@ -90,11 +90,11 @@ export default function SignupPage() {
 
     setLoading(true);
 
-    const { error: signupError } = await supabase.auth.signUp({
+    const { data, error: signupError } = await supabase.auth.signUp({
       email: normalizedEmail,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/login?verified=true`,
+        emailRedirectTo: `${window.location.origin}/profile`,
         data: {
           first_name: firstName.trim(),
           last_name: lastName.trim(),
@@ -122,57 +122,57 @@ export default function SignupPage() {
       return;
     }
 
-    await supabase.auth.signOut();
+    // Supabase creates a session immediately because
+    // "Confirm email" is disabled.
+    //
+    // We intentionally sign the user back out because
+    // we want them to manually log in after signup.
+    if (data.session) {
+      try {
+        const response = await fetch("/api/send-verification", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${data.session.access_token}`,
+          },
+        });
+
+        if (!response.ok) {
+          const contentType = response.headers.get("content-type");
+
+          if (contentType?.includes("application/json")) {
+            const errorData = await response.json();
+            console.error(
+              "Unable to send verification email:",
+              errorData
+            );
+          } else {
+            const errorText = await response.text();
+            console.error(
+              "Verification endpoint returned non-JSON:",
+              errorText
+            );
+          }
+        }
+      } catch (verificationError) {
+        console.error(
+          "Verification email request failed:",
+          verificationError
+        );
+      }
+
+      await supabase.auth.signOut();
+    }
 
     setLoading(false);
-    // 2. Check whether this was an existing account
-    // if (accountAlreadyExists) {
-    //   router.push(
-    //     `/login?message=${encodeURIComponent(
-    //       "An account is already associated with this UVA email address. Please sign in."
-    //     )}`
-    //   );
-    //   return;
-    // }
-    // 3. Otherwise this is a new signup
-    setEmail(normalizedEmail);
-    setSuccess(true);
+
+    router.push(
+      `/login?accountCreated=true&email=${encodeURIComponent(normalizedEmail)}`
+    );
+
+    router.refresh();
   };
 
-  if (success) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-[#07192D] px-6">
-        <div className="w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-xl">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-green-100 text-2xl">
-            ✓
-          </div>
 
-          <h1 className="mt-5 text-3xl font-bold text-[#07192D]">
-            Check Your UVA Email
-          </h1>
-
-          <p className="mt-4 leading-6 text-gray-600">
-            We sent a verification link to:
-          </p>
-
-          <p className="mt-2 font-semibold text-[#07192D]">{email}</p>
-
-          <p className="mt-4 text-sm leading-6 text-gray-500">
-            Open the email and click the verification link to activate your
-            UVA Pickleball account. After verification, log in with your UVA
-            email and password.
-          </p>
-
-          <Link
-            href="/login"
-            className="mt-6 inline-flex w-full items-center justify-center rounded-lg bg-[#E57200] px-5 py-3 font-semibold text-white transition hover:bg-[#c96300]"
-          >
-            Go to Login
-          </Link>
-        </div>
-      </main>
-    );
-  }
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#07192D] px-6 py-12">
@@ -276,7 +276,7 @@ export default function SignupPage() {
               required
               autoComplete="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value.toLowerCase())}
               placeholder="computingid@virginia.edu"
               className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-[#E57200]"
             />

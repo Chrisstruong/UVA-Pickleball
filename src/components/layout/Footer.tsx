@@ -69,8 +69,7 @@ export default function Footer() {
             </h2>
 
             <p className="mt-4 max-w-sm text-sm leading-6 text-white/60">
-              Building the largest pickleball community at the University of
-              Virginia.
+              Continuing to set the standard for collegiate pickleball + Largest club on Grounds
             </p>
           </div>
 
