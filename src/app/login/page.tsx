@@ -2,18 +2,35 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const router = useRouter();
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get("verified") !== "true") {
+      return;
+    }
+
+    const clearVerificationSession = async () => {
+      await supabase.auth.signOut();
+      setNotice("Your UVA email is verified. Please log in to continue.");
+      window.history.replaceState(null, "", "/login");
+    };
+
+    clearVerificationSession();
+  }, [supabase]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,6 +130,12 @@ export default function LoginPage() {
               {error && (
                 <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
                   {error}
+                </div>
+              )}
+
+              {notice && (
+                <div className="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700">
+                  {notice}
                 </div>
               )}
 

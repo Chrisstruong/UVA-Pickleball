@@ -1,10 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
+import { useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { CheckCircle2 } from "lucide-react";
+
+const schools = [
+  "College of Arts & Sciences",
+  "Darden School of Business",
+  "Frank Batten School of Leadership & Public Policy",
+  "McIntire School of Commerce",
+  "School of Architecture",
+  "School of Continuing & Professional Studies",
+  "School of Data Science",
+  "School of Education & Human Development",
+  "School of Engineering & Applied Science",
+  "School of Law",
+  "School of Medicine",
+  "School of Nursing",
+  "Other / Not Listed",
+];
+
+const graduationYears = ["2027", "2028", "2029", "2030", "2031", "2032"];
 
 export default function SignupPage() {
-  const supabase = createClient();
+
+  const supabase = useMemo(() => createClient(), []);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [school, setSchool] = useState("");
+  const [graduationYear, setGraduationYear] = useState("");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,6 +39,17 @@ export default function SignupPage() {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const isFormValid =
+    firstName.trim() !== "" &&
+    lastName.trim() !== "" &&
+    school !== "" &&
+    graduationYear !== "" &&
+    email.trim().toLowerCase().endsWith("@virginia.edu") &&
+    password.length >= 8 &&
+    confirmPassword === password;
+
+  const isUvaEmail =
+    email.trim().toLowerCase().endsWith("@virginia.edu");
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -22,8 +58,23 @@ export default function SignupPage() {
 
     const normalizedEmail = email.trim().toLowerCase();
 
+    if (!firstName.trim() || !lastName.trim()) {
+      setError("Please enter your first and last name.");
+      return;
+    }
+
     if (!normalizedEmail.endsWith("@virginia.edu")) {
       setError("Please use your UVA @virginia.edu email.");
+      return;
+    }
+
+    if (!school) {
+      setError("Please select your school.");
+      return;
+    }
+
+    if (!graduationYear) {
+      setError("Please select your graduation year.");
       return;
     }
 
@@ -43,17 +94,48 @@ export default function SignupPage() {
       email: normalizedEmail,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/confirm`,
+        emailRedirectTo: `${window.location.origin}/login?verified=true`,
+        data: {
+          first_name: firstName.trim(),
+          last_name: lastName.trim(),
+          school,
+          graduation_year: Number(graduationYear),
+        },
       },
     });
 
-    setLoading(false);
-
+    // 1. Handle actual Supabase errors
     if (signupError) {
-      setError(signupError.message);
+      const message = signupError.message.toLowerCase();
+
+      if (
+        message.includes("already registered") ||
+        message.includes("already been registered") ||
+        message.includes("user already registered")
+      ) {
+        setError("An account already exists with this UVA email.");
+      } else {
+        setError(signupError.message);
+      }
+
+      setLoading(false);
       return;
     }
 
+    await supabase.auth.signOut();
+
+    setLoading(false);
+    // 2. Check whether this was an existing account
+    // if (accountAlreadyExists) {
+    //   router.push(
+    //     `/login?message=${encodeURIComponent(
+    //       "An account is already associated with this UVA email address. Please sign in."
+    //     )}`
+    //   );
+    //   return;
+    // }
+    // 3. Otherwise this is a new signup
+    setEmail(normalizedEmail);
     setSuccess(true);
   };
 
@@ -77,12 +159,16 @@ export default function SignupPage() {
 
           <p className="mt-4 text-sm leading-6 text-gray-500">
             Open the email and click the verification link to activate your
-            UVA Pickleball account.
+            UVA Pickleball account. After verification, log in with your UVA
+            email and password.
           </p>
 
-          <p className="mt-3 text-sm text-gray-500">
-            You can complete this before, during, or after your tryout.
-          </p>
+          <Link
+            href="/login"
+            className="mt-6 inline-flex w-full items-center justify-center rounded-lg bg-[#E57200] px-5 py-3 font-semibold text-white transition hover:bg-[#c96300]"
+          >
+            Go to Login
+          </Link>
         </div>
       </main>
     );
@@ -90,7 +176,7 @@ export default function SignupPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#07192D] px-6 py-12">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
+      <div className="w-full max-w-lg rounded-2xl bg-white p-8 shadow-xl">
         <div className="text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#E57200]">
             UVA Pickleball
@@ -107,9 +193,82 @@ export default function SignupPage() {
         </div>
 
         <form onSubmit={handleSignup} className="mt-8 space-y-5">
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                First Name <span className="text-red-500">*</span>
+              </label>
+
+              <input
+                type="text"
+                required
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                placeholder="First name"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-[#E57200]"
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Last Name <span className="text-red-500">*</span>
+              </label>
+
+              <input
+                type="text"
+                required
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="Last name"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-[#E57200]"
+              />
+            </div>
+          </div>
+
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
-              UVA Email
+              UVA School  <span className="text-red-500">*</span>
+            </label>
+
+            <select
+              required
+              value={school}
+              onChange={(e) => setSchool(e.target.value)}
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none transition focus:border-[#E57200]"
+            >
+              <option value="">Select your school</option>
+
+              {schools.map((schoolName) => (
+                <option key={schoolName} value={schoolName}>
+                  {schoolName}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              Graduation Year <span className="text-red-500">*</span>
+            </label>
+
+            <select
+              required
+              value={graduationYear}
+              onChange={(e) => setGraduationYear(e.target.value)}
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none transition focus:border-[#E57200]"
+            >
+              <option value="">Select graduation year</option>
+
+              {graduationYears.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              UVA Email Address <span className="text-red-500">*</span>
             </label>
 
             <input
@@ -121,11 +280,35 @@ export default function SignupPage() {
               placeholder="computingid@virginia.edu"
               className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-[#E57200]"
             />
+            {email && (
+              <div className="mt-2 flex items-center gap-2 text-sm">
+                {isUvaEmail ? (
+                  <>
+                    <CheckCircle2
+                      size={18}
+                      className="animate-in zoom-in text-green-600 duration-300"
+                    />
+                    <span className="font-medium text-green-600">
+                      Valid UVA email address
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-red-500">
+                    Please use your @virginia.edu email address
+                  </span>
+                )}
+              </div>
+            )}
+
+            <p className="mt-2 text-xs text-gray-500">
+              Use your @virginia.edu email address.
+            </p>
           </div>
 
+          {/* Password */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
-              Password
+              Password <span className="text-red-500">*</span>
             </label>
 
             <input
@@ -135,13 +318,35 @@ export default function SignupPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="At least 8 characters"
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-[#E57200]"
+              className={`w-full rounded-lg border px-4 py-3 outline-none transition-all duration-300 ${password.length >= 8
+                ? "border-green-500 focus:border-green-500"
+                : "border-gray-300 focus:border-[#E57200]"
+                }`}
             />
+
+            <div className="mt-2 flex items-center gap-2 text-sm">
+              {password.length >= 8 ? (
+                <>
+                  <CheckCircle2
+                    size={18}
+                    className="animate-in zoom-in text-green-600 duration-300"
+                  />
+                  <span className="font-medium text-green-600">
+                    Password meets requirements
+                  </span>
+                </>
+              ) : (
+                <span className="text-gray-500">
+                  Must be at least 8 characters
+                </span>
+              )}
+            </div>
           </div>
 
+          {/* Confirm Password */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
-              Confirm Password
+              Confirm Password <span className="text-red-500">*</span>
             </label>
 
             <input
@@ -151,8 +356,31 @@ export default function SignupPage() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Retype your password"
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-[#E57200]"
+              className={`w-full rounded-lg border px-4 py-3 outline-none transition-all duration-300 ${confirmPassword && confirmPassword === password
+                ? "border-green-500 focus:border-green-500"
+                : "border-gray-300 focus:border-[#E57200]"
+                }`}
             />
+
+            {confirmPassword && (
+              <div className="mt-2 flex items-center gap-2 text-sm">
+                {confirmPassword === password ? (
+                  <>
+                    <CheckCircle2
+                      size={18}
+                      className="animate-in zoom-in text-green-600 duration-300"
+                    />
+                    <span className="font-medium text-green-600">
+                      Passwords match
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-red-500">
+                    Passwords do not match yet
+                  </span>
+                )}
+              </div>
+            )}
           </div>
 
           {error && (
@@ -163,8 +391,8 @@ export default function SignupPage() {
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-[#E57200] px-5 py-3 font-semibold text-white transition hover:bg-[#c96300] disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={loading || !isFormValid}
+            className="w-full rounded-lg bg-[#E57200] px-5 py-3 font-semibold text-white transition hover:bg-[#c96300] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? "Creating Account..." : "Create Account"}
           </button>
