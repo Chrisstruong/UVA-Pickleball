@@ -156,7 +156,7 @@ export async function POST(request: NextRequest) {
 
     // 8. Send through Resend
     const { error: resendError } = await resend.emails.send({
-      from: "UVA Pickleball <noreply@pickleballclubatuva.com>",
+      from: "Pickleball Club at UVA <noreply@pickleballclubatuva.com>",
       to: user.email,
       subject: "Verify your UVA email",
       html: `
