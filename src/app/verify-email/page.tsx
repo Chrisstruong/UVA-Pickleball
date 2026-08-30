@@ -45,7 +45,7 @@ export default async function VerifyEmailPage({
         </div>
 
         <p className="mt-6 text-sm font-semibold uppercase tracking-[0.2em] text-[#E57200]">
-          UVA Pickleball
+          Picklball Club at UVA
         </p>
 
         <h1 className="mt-3 text-3xl font-bold text-[#07192D]">
@@ -55,8 +55,7 @@ export default async function VerifyEmailPage({
         {canVerify ? (
           <>
             <p className="mt-4 leading-6 text-gray-600">
-              Click the button below to verify your UVA email address. This
-              extra step protects your account from automatic email scanners.
+              Click the button below to verify your UVA email address.
             </p>
 
             <form action="/api/verify-email" method="post" className="mt-7">

@@ -220,9 +220,8 @@ export default function ProfilePage() {
                         <section>
                             {!emailVerified && (
                                 <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm leading-6 text-amber-800">
-                                    Your account is active, but your UVA email is not verified yet.
-                                    Check your inbox and click the Supabase confirmation link to
-                                    update your account status.
+                                    Your account is active, but your UVA email hasn’t been verified yet.
+                                    Check your inbox for the verification email and follow the link to verify your account. Please allow up to 5 minutes for the email to arrive.
                                 </div>
                             )}
 
