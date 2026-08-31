@@ -10,7 +10,7 @@ import {
 
 const officers = [
   {
-    name: "Viviane Nguyen",
+    name: "Vivianne Ngo",
     role: "Co-President",
     year: "Class of 2027",
     school: "Politics, Philosophy",
