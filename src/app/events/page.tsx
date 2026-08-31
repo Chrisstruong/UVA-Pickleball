@@ -2,8 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { CalendarDays, Clock, MapPin, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
 import ScrollToUpcomingEventsButton from "@/components/events/ScrollToUpcomingEventsButton";
 import ViewAttendeesButton from "@/components/events/ViewAttendeesButton";
+import MoreEventsComing from "@/components/events/MoreEventsComing";
 
 type ClubEvent = {
   title: string;
@@ -66,7 +68,7 @@ const events: ClubEvent[] = [
     capacity: 504,
     image: "/images/events/Snorlax.png",
     status: "open",
-    signupUrl:"https://docs.google.com/spreadsheets/d/1qt90UR_xtAeMSM6AJRSKwr4VOrTozdMEPMNmA7wGLqk/edit?gid=677840540#gid=677840540"
+    signupUrl: "https://docs.google.com/spreadsheets/d/1qt90UR_xtAeMSM6AJRSKwr4VOrTozdMEPMNmA7wGLqk/edit?gid=677840540#gid=677840540"
   },
   {
     title: "Fall 2026 Tryout Day 5",
@@ -92,7 +94,7 @@ const events: ClubEvent[] = [
     status: "open",
     signupUrl: "https://docs.google.com/spreadsheets/d/1qt90UR_xtAeMSM6AJRSKwr4VOrTozdMEPMNmA7wGLqk/edit?gid=2067550300#gid=2067550300"
   },
-  
+
 ];
 
 
@@ -157,6 +159,9 @@ export default function EventsPage() {
           </div>
         </div>
       </section>
+
+      {/* More Fall 2026 events */}
+      <MoreEventsComing />
 
       <section className="mx-auto grid max-w-7xl gap-8 px-5 py-8 md:px-6 md:py-10 lg:grid-cols-[260px_1fr]">
         <aside className="hidden lg:block">

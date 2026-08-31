@@ -16,6 +16,27 @@ const schedule = [
     category: "social",
   },
   {
+    day: "TUE",
+    time: "6:00 PM - 8:00 PM",
+    type: "Social",
+    title: "Perry Fishburne courts 3-8",
+    category: "social",
+  },
+  {
+    day: "TUE",
+    time: "4:00 PM - 5:45 PM",
+    type: "Tournament",
+    title: "Snyder courts 4, 5, 9, & 10",
+    category: "tournament",
+  },
+  {
+    day: "WED",
+    time: "4:00 PM - 5:45 PM",
+    type: "Social",
+    title: "Snyder courts 4, 5, 9, & 10",
+    category: "social",
+  },
+  {
     day: "THU",
     time: "4:00 PM - 5:45 PM",
     type: "Tournament",

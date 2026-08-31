@@ -14,7 +14,11 @@ const links = [
   { name: "Team", href: "/team" },
   { name: "Events", href: "/events" },
   { name: "Schedule", href: "/schedule" },
-  { name: "Merch", href: "/merch" },
+  {
+    name: "Merch",
+    href: "https://pickleball-club-at-uva.square.site/",
+    external: true,
+  },
   { name: "Announcements", href: "/announcements" },
   { name: "Contact", href: "/contact" },
 ];
@@ -88,21 +92,31 @@ export default function Navbar() {
         <nav className="mx-5 hidden min-w-0 flex-1 items-center justify-center gap-3 text-xs font-medium lg:flex xl:gap-6 xl:text-sm">
           {links.map((link) => {
             const isActive =
-              link.href === "/"
+              link.external
+                ? false
+                : link.href === "/"
                 ? pathname === "/"
                 : pathname.startsWith(link.href);
 
-            return (
-              <Link
+            const className = `relative py-2 transition-colors ${isActive
+              ? "text-[#e57200]"
+              : "text-black hover:text-[#e57200]"
+              }`;
+
+            return link.external ? (
+              <a
                 key={link.name}
                 href={link.href}
-                className={`relative py-2 transition-colors ${isActive
-                  ? "text-[#e57200]"
-                  : "text-black hover:text-[#e57200]"
-                  }`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={className}
               >
                 {link.name}
-              </Link>
+              </a>
+            ) : (
+                <Link key={link.name} href={link.href} className={className}>
+                  {link.name}
+                </Link>
             );
           })}
         </nav>
@@ -165,22 +179,37 @@ export default function Navbar() {
           <div className="mx-auto flex max-w-[1400px] flex-col">
             {links.map((link) => {
               const isActive =
-                link.href === "/"
+                link.external
+                  ? false
+                  : link.href === "/"
                   ? pathname === "/"
                   : pathname.startsWith(link.href);
 
-              return (
-                <Link
+              const className = `border-b border-slate-100 px-2 py-3 text-base font-medium transition-colors last:border-b-0 ${isActive
+                ? "text-[#e57200]"
+                : "text-black hover:text-[#e57200]"
+                }`;
+
+              return link.external ? (
+                <a
                   key={link.name}
                   href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   onClick={() => setIsMenuOpen(false)}
-                  className={`border-b border-slate-100 px-2 py-3 text-base font-medium transition-colors last:border-b-0 ${isActive
-                    ? "text-[#e57200]"
-                    : "text-black hover:text-[#e57200]"
-                    }`}
+                  className={className}
                 >
                   {link.name}
-                </Link>
+                </a>
+              ) : (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    onClick={() => setIsMenuOpen(false)}
+                    className={className}
+                  >
+                    {link.name}
+                  </Link>
               );
             })}
             <div className="mt-3 border-t border-slate-100 pt-3">

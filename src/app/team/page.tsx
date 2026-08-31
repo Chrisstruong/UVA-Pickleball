@@ -3,7 +3,7 @@ import { Users } from "lucide-react";
 
 const players = [
   {
-    name: "Viviane Ngo",
+    name: "Vivianne Ngo",
     year: "4th Year",
     major: "Politics & Psychology",
     dupr: "4.61",
