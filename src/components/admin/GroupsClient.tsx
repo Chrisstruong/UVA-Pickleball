@@ -1,8 +1,20 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import {
+  useMemo,
+  useState,
+  useTransition,
+} from "react";
 import { Search, Users } from "lucide-react";
+import { updateMemberGroup } from "@/app/admin/groups/actions";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Card,
   CardContent,
@@ -228,6 +240,10 @@ export default function GroupsClient({
                     <TableHead>
                       UVA Email
                     </TableHead>
+
+                    <TableHead>
+                      Change Group
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
 
@@ -235,7 +251,7 @@ export default function GroupsClient({
                   {filteredMembers.length === 0 ? (
                     <TableRow>
                       <TableCell
-                        colSpan={5}
+                        colSpan={6}
                         className="h-32 text-center text-slate-500"
                       >
                         No members found.
@@ -245,27 +261,21 @@ export default function GroupsClient({
                     filteredMembers.map((member) => (
                       <TableRow key={member.id}>
                         <TableCell className="font-semibold text-[#07192d]">
-                          {member.full_name ||
-                            "Unnamed Member"}
+                          {member.full_name || "Unnamed Member"}
                         </TableCell>
 
                         <TableCell>
-                          <GroupBadge
-                            group={member.club_group}
-                          />
+                          <GroupBadge group={member.club_group} />
                         </TableCell>
 
                         <TableCell>
                           <MembershipBadge
-                            status={
-                              member.membership_status
-                            }
+                            status={member.membership_status}
                           />
                         </TableCell>
 
                         <TableCell>
-                          {member.tryout_result ||
-                            "Pending"}
+                          {member.tryout_result || "Pending"}
                         </TableCell>
 
                         <TableCell>
@@ -275,9 +285,18 @@ export default function GroupsClient({
                             </p>
 
                             <p className="mt-1 text-xs text-slate-500">
-                              {member.email_verified ? "Verified" : "Unverified"}
+                              {member.email_verified
+                                ? "Verified"
+                                : "Unverified"}
                             </p>
                           </div>
+                        </TableCell>
+
+                        <TableCell>
+                          <GroupSelector
+                            memberId={member.id}
+                            currentGroup={member.club_group}
+                          />
                         </TableCell>
                       </TableRow>
                     ))
@@ -374,5 +393,63 @@ function MembershipBadge({
     <Badge variant="secondary">
       {status || "Pending"}
     </Badge>
+  );
+}
+
+function GroupSelector({
+  memberId,
+  currentGroup,
+}: {
+  memberId: string;
+  currentGroup: Member["club_group"];
+}) {
+  const [isPending, startTransition] =
+    useTransition();
+
+  const handleChange = (value: string) => {
+    const newGroup =
+      value === "Unassigned"
+        ? null
+        : (value as
+          | "Tournament"
+          | "Social"
+          | "General");
+
+    startTransition(async () => {
+      await updateMemberGroup(
+        memberId,
+        newGroup
+      );
+    });
+  };
+
+  return (
+    <Select
+      value={currentGroup ?? "Unassigned"}
+      onValueChange={handleChange}
+      disabled={isPending}
+    >
+      <SelectTrigger className="w-[160px]">
+        <SelectValue />
+      </SelectTrigger>
+
+      <SelectContent>
+        <SelectItem value="Tournament">
+          Tournament
+        </SelectItem>
+
+        <SelectItem value="Social">
+          Social
+        </SelectItem>
+
+        <SelectItem value="General">
+          General
+        </SelectItem>
+
+        <SelectItem value="Unassigned">
+          Unassigned
+        </SelectItem>
+      </SelectContent>
+    </Select>
   );
 }
