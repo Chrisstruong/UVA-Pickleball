@@ -1,0 +1,3 @@
+update public.profiles
+set club_group = 'Tournament'
+where id = 'USER_UUID';
