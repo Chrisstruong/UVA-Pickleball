@@ -181,7 +181,7 @@ export default function GroupsClient({
             <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
               <div>
                 <CardTitle className="text-xl text-[#07192d]">
-                  Member Directory
+                  Member List
                 </CardTitle>
 
                 <p className="mt-1 text-sm text-slate-500">

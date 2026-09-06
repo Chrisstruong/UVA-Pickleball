@@ -56,13 +56,6 @@ export default async function AdminLayout({
             >
               Groups
             </Link>
-
-            <Link
-              href="/"
-              className="block rounded-lg px-4 py-3 text-sm font-medium text-slate-300 hover:bg-white/10"
-            >
-              Back to Website
-            </Link>
           </nav>
         </aside>
 
