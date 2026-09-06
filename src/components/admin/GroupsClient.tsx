@@ -65,6 +65,8 @@ export default function GroupsClient({
   members,
 }: GroupsClientProps) {
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const MEMBERS_PER_PAGE = 25;
   const [groupFilter, setGroupFilter] =
     useState<GroupFilter>("All");
 
@@ -113,6 +115,18 @@ export default function GroupsClient({
       return matchesSearch && matchesGroup;
     });
   }, [members, search, groupFilter]);
+
+  const totalPages = Math.ceil(
+    filteredMembers.length / MEMBERS_PER_PAGE
+  );
+
+  const startIndex =
+    (currentPage - 1) * MEMBERS_PER_PAGE;
+
+  const paginatedMembers = filteredMembers.slice(
+    startIndex,
+    startIndex + MEMBERS_PER_PAGE
+  );
 
   return (
     <div className="px-6 py-10 md:px-10">
@@ -407,30 +421,30 @@ function GroupSelector({
     useTransition();
 
   const handleChange = (value: string) => {
-  const newGroup =
-    value === "Unassigned"
-      ? null
-      : (value as
+    const newGroup =
+      value === "Unassigned"
+        ? null
+        : (value as
           | "Tournament"
           | "Social"
           | "General");
 
-  startTransition(async () => {
-    try {
-      const result = await updateMemberGroup(
-        memberId,
-        newGroup
-      );
+    startTransition(async () => {
+      try {
+        const result = await updateMemberGroup(
+          memberId,
+          newGroup
+        );
 
-      console.log("Group updated:", result);
-    } catch (error) {
-      console.error(
-        "Failed to change group:",
-        error
-      );
-    }
-  });
-};
+        console.log("Group updated:", result);
+      } catch (error) {
+        console.error(
+          "Failed to change group:",
+          error
+        );
+      }
+    });
+  };
 
   return (
     <Select
