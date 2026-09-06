@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { CircleUser, LogOut, Menu, X } from "lucide-react";
+import { CircleUser, LogOut, Menu, X, Shield,LayoutDashboard } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+
 
 
 const links = [
@@ -29,7 +30,9 @@ export default function Navbar() {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isOfficer, setIsOfficer] = useState(false);
   const supabase = useMemo(() => createClient(), []);
+
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -48,14 +51,48 @@ export default function Navbar() {
       } = await supabase.auth.getUser();
 
       setIsLoggedIn(!!user);
+
+      if (!user) {
+        setIsOfficer(false);
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      setIsOfficer(
+        profile?.role === "officer" ||
+        profile?.role === "admin"
+      );
     };
 
     checkUser();
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsLoggedIn(!!session?.user);
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      const user = session?.user;
+
+      setIsLoggedIn(!!user);
+
+      if (!user) {
+        setIsOfficer(false);
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      setIsOfficer(
+        profile?.role === "officer" ||
+        profile?.role === "admin"
+      );
     });
 
     return () => {
@@ -95,8 +132,8 @@ export default function Navbar() {
               link.external
                 ? false
                 : link.href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(link.href);
+                  ? pathname === "/"
+                  : pathname.startsWith(link.href);
 
             const className = `relative py-2 transition-colors ${isActive
               ? "text-[#e57200]"
@@ -114,9 +151,9 @@ export default function Navbar() {
                 {link.name}
               </a>
             ) : (
-                <Link key={link.name} href={link.href} className={className}>
-                  {link.name}
-                </Link>
+              <Link key={link.name} href={link.href} className={className}>
+                {link.name}
+              </Link>
             );
           })}
         </nav>
@@ -126,6 +163,19 @@ export default function Navbar() {
           {/* Account */}
           {isLoggedIn ? (
             <div className="flex items-center gap-1">
+              {isOfficer && (
+                <Link
+                  href="/admin"
+                  aria-label="Admin Dashboard"
+                  title="Admin Dashboard"
+                  className="flex h-10 items-center gap-2 rounded-full bg-[#07192d] px-4 text-sm font-semibold text-white transition hover:bg-[#E57200]"
+                >
+                  <LayoutDashboard className="h-5 w-5" />
+                  <span className="hidden xl:inline">
+                    Admin Dashboard
+                  </span>
+                </Link>
+              )}
               <Link
                 href="/profile"
                 aria-label="My Profile"
@@ -182,8 +232,8 @@ export default function Navbar() {
                 link.external
                   ? false
                   : link.href === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(link.href);
+                    ? pathname === "/"
+                    : pathname.startsWith(link.href);
 
               const className = `border-b border-slate-100 px-2 py-3 text-base font-medium transition-colors last:border-b-0 ${isActive
                 ? "text-[#e57200]"
@@ -202,26 +252,48 @@ export default function Navbar() {
                   {link.name}
                 </a>
               ) : (
-                  <Link
-                    key={link.name}
-                    href={link.href}
-                    onClick={() => setIsMenuOpen(false)}
-                    className={className}
-                  >
-                    {link.name}
-                  </Link>
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={className}
+                >
+                  {link.name}
+                </Link>
               );
             })}
             <div className="mt-3 border-t border-slate-100 pt-3">
               {isLoggedIn ? (
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="flex w-full items-center gap-3 rounded-md px-2 py-3 text-left text-base font-medium text-[#07192d] transition hover:bg-slate-50 hover:text-[#E57200]"
-                >
-                  <LogOut className="h-5 w-5" />
-                  Log Out
-                </button>
+                <div className="flex flex-col">
+                  {isOfficer && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center gap-3 rounded-md px-2 py-3 text-base font-medium text-[#07192d] transition hover:bg-slate-50 hover:text-[#E57200]"
+                    >
+                      <LayoutDashboard className="h-5 w-5" />
+                      Admin Dashboard
+                    </Link>
+                  )}
+
+                  <Link
+                    href="/profile"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center gap-3 rounded-md px-2 py-3 text-base font-medium text-[#07192d] transition hover:bg-slate-50 hover:text-[#E57200]"
+                  >
+                    <CircleUser className="h-5 w-5" />
+                    My Profile
+                  </Link>
+
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="flex w-full items-center gap-3 rounded-md px-2 py-3 text-left text-base font-medium text-[#07192d] transition hover:bg-slate-50 hover:text-[#E57200]"
+                  >
+                    <LogOut className="h-5 w-5" />
+                    Log Out
+                  </button>
+                </div>
               ) : (
                 <Link
                   href="/login"
