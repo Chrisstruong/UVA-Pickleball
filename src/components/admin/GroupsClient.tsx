@@ -74,16 +74,16 @@ export default function GroupsClient({
 
   const filteredMembers = useMemo(() => {
     return members.filter((member) => {
+      const searchTerm = search.toLowerCase();
+
       const matchesSearch =
-      member.full_name
-        ?.toLowerCase()
-        .includes(search.toLowerCase()) ?? false;
+        member.full_name?.toLowerCase().includes(searchTerm) ||
+        member.email.toLowerCase().includes(searchTerm);
 
       let matchesGroup = true;
 
       if (groupFilter === "Tournament") {
-        matchesGroup =
-          member.club_group === "Tournament";
+        matchesGroup = member.club_group === "Tournament";
       }
 
       if (groupFilter === "Social") {
@@ -168,7 +168,7 @@ export default function GroupsClient({
                   onChange={(event) =>
                     setSearch(event.target.value)
                   }
-                  placeholder="Search by member name..."
+                  placeholder="Search by name or UVA email..."
                   className="pl-9"
                 />
               </div>
@@ -269,17 +269,15 @@ export default function GroupsClient({
                         </TableCell>
 
                         <TableCell>
-                          <Badge
-                            variant={
-                              member.email_verified
-                                ? "default"
-                                : "secondary"
-                            }
-                          >
-                            {member.email_verified
-                              ? "Verified"
-                              : "Unverified"}
-                          </Badge>
+                          <div>
+                            <p className="font-medium text-[#07192d]">
+                              {member.email || "No email"}
+                            </p>
+
+                            <p className="mt-1 text-xs text-slate-500">
+                              {member.email_verified ? "Verified" : "Unverified"}
+                            </p>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))
