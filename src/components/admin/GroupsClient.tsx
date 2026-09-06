@@ -407,21 +407,30 @@ function GroupSelector({
     useTransition();
 
   const handleChange = (value: string) => {
-    const newGroup =
-      value === "Unassigned"
-        ? null
-        : (value as
+  const newGroup =
+    value === "Unassigned"
+      ? null
+      : (value as
           | "Tournament"
           | "Social"
           | "General");
 
-    startTransition(async () => {
-      await updateMemberGroup(
+  startTransition(async () => {
+    try {
+      const result = await updateMemberGroup(
         memberId,
         newGroup
       );
-    });
-  };
+
+      console.log("Group updated:", result);
+    } catch (error) {
+      console.error(
+        "Failed to change group:",
+        error
+      );
+    }
+  });
+};
 
   return (
     <Select
