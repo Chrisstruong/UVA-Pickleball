@@ -75,9 +75,9 @@ export default function GroupsClient({
   const filteredMembers = useMemo(() => {
     return members.filter((member) => {
       const matchesSearch =
-        member.full_name
-          ?.toLowerCase()
-          .includes(search.toLowerCase()) ?? false;
+      member.full_name
+        ?.toLowerCase()
+        .includes(search.toLowerCase()) ?? false;
 
       let matchesGroup = true;
 
