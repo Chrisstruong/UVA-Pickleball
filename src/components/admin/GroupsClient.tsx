@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useEffect,
   useMemo,
   useState,
   useTransition,
@@ -128,6 +129,9 @@ export default function GroupsClient({
     startIndex + MEMBERS_PER_PAGE
   );
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, groupFilter]);
   return (
     <div className="px-6 py-10 md:px-10">
       <div className="mx-auto max-w-[1400px]">
@@ -181,7 +185,16 @@ export default function GroupsClient({
                 </CardTitle>
 
                 <p className="mt-1 text-sm text-slate-500">
-                  {filteredMembers.length} members shown
+                  Showing{" "}
+                  {filteredMembers.length === 0
+                    ? 0
+                    : startIndex + 1}
+                  –
+                  {Math.min(
+                    startIndex + MEMBERS_PER_PAGE,
+                    filteredMembers.length
+                  )}{" "}
+                  of {filteredMembers.length} members
                 </p>
               </div>
 
@@ -235,7 +248,7 @@ export default function GroupsClient({
           <CardContent>
             <div className="overflow-x-auto">
               <Table>
-                <TableHeader>
+                <TableHeader className="sticky top-0 z-10 bg-white">
                   <TableRow>
                     <TableHead>Name</TableHead>
 
@@ -266,33 +279,33 @@ export default function GroupsClient({
                     <TableRow>
                       <TableCell
                         colSpan={6}
-                        className="h-32 text-center text-slate-500"
+                        className="py-3 h-32 text-center text-slate-500"
                       >
                         No members found.
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredMembers.map((member) => (
+                    paginatedMembers.map((member) => (
                       <TableRow key={member.id}>
-                        <TableCell className="font-semibold text-[#07192d]">
+                        <TableCell className="py-3 font-semibold text-[#07192d]">
                           {member.full_name || "Unnamed Member"}
                         </TableCell>
 
-                        <TableCell>
+                        <TableCell className="py-3">
                           <GroupBadge group={member.club_group} />
                         </TableCell>
 
-                        <TableCell>
+                        <TableCell className="py-3">
                           <MembershipBadge
                             status={member.membership_status}
                           />
                         </TableCell>
 
-                        <TableCell>
+                        <TableCell className="py-3">
                           {member.tryout_result || "Pending"}
                         </TableCell>
 
-                        <TableCell>
+                        <TableCell className="py-3">
                           <div>
                             <p className="font-medium text-[#07192d]">
                               {member.email || "No email"}
@@ -306,7 +319,7 @@ export default function GroupsClient({
                           </div>
                         </TableCell>
 
-                        <TableCell>
+                        <TableCell className="py-3">
                           <GroupSelector
                             memberId={member.id}
                             currentGroup={member.club_group}
@@ -317,6 +330,37 @@ export default function GroupsClient({
                   )}
                 </TableBody>
               </Table>
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between border-t pt-4">
+                  <p className="text-sm text-slate-500">
+                    Page {currentPage} of {totalPages}
+                  </p>
+
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      disabled={currentPage === 1}
+                      onClick={() =>
+                        setCurrentPage((page) => page - 1)
+                      }
+                      className="rounded-md border px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      Previous
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={currentPage === totalPages}
+                      onClick={() =>
+                        setCurrentPage((page) => page + 1)
+                      }
+                      className="rounded-md border px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
