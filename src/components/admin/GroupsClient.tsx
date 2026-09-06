@@ -31,6 +31,7 @@ import { Input } from "@/components/ui/input";
 type Member = {
   id: string;
   full_name: string | null;
+  email: string;
   club_group: "Tournament" | "Social" | "General" | null;
   membership_status: string | null;
   tryout_result: string | null;
