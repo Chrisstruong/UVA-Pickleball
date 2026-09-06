@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 type ClubGroup =
   | "Tournament"
@@ -13,21 +14,36 @@ export async function updateMemberGroup(
   memberId: string,
   group: ClubGroup
 ) {
+  // 1. Normal authenticated client
   const supabase = await createClient();
 
   const {
     data: { user },
+    error: userError,
   } = await supabase.auth.getUser();
 
-  if (!user) {
+  if (userError || !user) {
     throw new Error("Unauthorized");
   }
 
-  const { data: officerProfile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
+  // 2. Confirm current user is officer/admin
+  const { data: officerProfile, error: profileError } =
+    await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+  if (profileError) {
+    console.error(
+      "Unable to verify officer:",
+      profileError
+    );
+
+    throw new Error(
+      "Unable to verify officer permissions."
+    );
+  }
 
   if (
     officerProfile?.role !== "officer" &&
@@ -36,17 +52,29 @@ export async function updateMemberGroup(
     throw new Error("Forbidden");
   }
 
-  const { error } = await supabase
+  // 3. Perform privileged update server-side
+  const { error: updateError } = await supabaseAdmin
     .from("profiles")
     .update({
       club_group: group,
     })
     .eq("id", memberId);
 
-  if (error) {
-    console.error("Error updating member group:", error);
-    throw new Error("Unable to update member group");
+  if (updateError) {
+    console.error(
+      "Error updating member group:",
+      updateError
+    );
+
+    throw new Error(
+      "Unable to update member group."
+    );
   }
 
+  // 4. Refresh page data
   revalidatePath("/admin/groups");
+
+  return {
+    success: true,
+  };
 }
