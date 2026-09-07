@@ -431,7 +431,7 @@ export default function AboutPage() {
                         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
 
                             <GroupCard
-                                accent="orange"
+                                accent="navy"
                                 title="General"
                                 subtitle="Open To Everyone"
                                 image="/images/club/general.jpg"
@@ -442,11 +442,11 @@ export default function AboutPage() {
                                     "Equipment Provided",
                                     "Tournament opportunities"
                                 ]}
-                                footer="Tryout Required"
+                                footer="Tryout Not Required"
                             />
 
                             <GroupCard
-                                accent="navy"
+                                accent="orange"
                                 title="Social"
                                 subtitle="250 Players"
                                 image="/images/club/social-team.jpg"

@@ -154,7 +154,7 @@ export default function ProfilePage() {
                                 {group ? (
                                     <div className="inline-flex items-center gap-1.5 rounded-full bg-orange-50 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#E57200]">
                                         <Flame className="h-3.5 w-3.5" />
-                                        {group} Group
+                                        {group}
                                     </div>
                                 ) : (
                                     <div className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">
@@ -204,13 +204,20 @@ export default function ProfilePage() {
                                     </p>
 
                                     <h2 className="font-bebas mt-3 text-5xl uppercase tracking-wide md:text-6xl">
-                                        {tryoutResult || "Result Pending"}
+                                        {group ? `${group} Group` : "Result Pending"}
                                     </h2>
 
                                     <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-200">
-                                        {tryoutResult
-                                            ? `Your Fall 2026 tryout placement is ${tryoutResult}.`
-                                            : "Your tryout result has not been released yet. Check back after results are published."}
+                                        {group === "General"
+                                            ? "Congratulations on making the General Team! You're welcome to join us on Fridays to play, meet other members, and enjoy pickleball."
+
+                                            : group === "Social"
+                                                ? "Congratulations! You made the UVA Pickleball Social Team. We're so excited to welcome you! Get ready to meet new people, have fun, and play plenty of pickleball."
+
+                                                : group === "Tournament"
+                                                    ? "Congratulations! You made the UVA Pickleball Tournament Team. You've earned the opportunity to represent UVA, train with our competitive team, travel to tournaments, and compete against other universities. We're excited to have you representing the Hoos!"
+
+                                                    : "Your tryout result has not been released yet. Check back after results are published."}
                                     </p>
                                 </div>
                             </div>
