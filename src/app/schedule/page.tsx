@@ -174,7 +174,7 @@ export default function SchedulePage() {
                         <div
                           className={`rounded-md p-3 ${categoryStyles[
                             item.category as keyof typeof categoryStyles
-                            ]
+                          ]
                             }`}
                         >
                           <p className="text-[8px] font-bold uppercase tracking-wide opacity-90">
@@ -204,12 +204,11 @@ export default function SchedulePage() {
               </h2>
 
               <p className="mt-2 text-sm leading-6 text-white/80">
-                Monday through Thursday from 4:00 PM to 5:45 PM, plus Friday
-                from 3:30 PM to 5:30 PM at Snyder.
+                Tournament meets Monday from 6:00 PM to 8:00 PM at Perry Fishburne, Tuesday and Thursday from 4:00 PM to 5:45 PM at Snyder, and Sunday from 3:00 PM to 5:00 PM at Snyder.
               </p>
 
               <p className="mt-5 text-xs font-bold uppercase tracking-wide text-white/90">
-                Thursday uses courts 9 & 10 only
+                THURSDAY USES COURTS 9 & 10 ONLY
               </p>
             </div>
           </div>
@@ -221,9 +220,10 @@ export default function SchedulePage() {
             </h2>
 
             <p className="mt-3 max-w-lg text-sm leading-6 text-white/85">
-              Social meets Monday through Thursday from 6:00 PM to 8:00 PM at
-              Perry Fishburne. <br />General meets Sunday from 3:00 PM to 5:00 PM at
-              Snyder.
+              Social meets Monday and Wednesday from 4:00 PM to 5:45 PM at Snyder, Wednesday from 6-8 at Perry fishburne is extra court time! and Tuesday and Thursday from 6:00 PM to 8:00 PM at Perry Fishburne.
+              <br />
+              <br />
+              General meets Friday from 3:30 PM to 5:30 PM at Snyder.
             </p>
 
             <div className="mt-7 flex items-center gap-3">
@@ -232,7 +232,7 @@ export default function SchedulePage() {
                 Join 200+ active members
               </p>
             </div>
-            
+
           </div>
         </div>
       </section>
@@ -260,9 +260,8 @@ function LegendDot({
 function ScheduleCard({ item }: { item: ScheduleItem }) {
   return (
     <article
-      className={`rounded-xl p-4 shadow-sm ${
-        categoryStyles[item.category as keyof typeof categoryStyles]
-      }`}
+      className={`rounded-xl p-4 shadow-sm ${categoryStyles[item.category as keyof typeof categoryStyles]
+        }`}
     >
       <div className="flex items-start justify-between gap-4">
         <div>
