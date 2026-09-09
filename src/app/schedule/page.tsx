@@ -3,16 +3,16 @@ import { MapPin } from "lucide-react";
 const schedule = [
   {
     day: "MON",
-    time: "4:00 PM - 5:45 PM",
+    time: "6:00 PM - 8:00 PM",
     type: "Tournament",
-    title: "Snyder courts 4, 5, 9, & 10",
+    title: "Perry Fishburne courts 3-8",
     category: "tournament",
   },
   {
     day: "MON",
-    time: "6:00 PM - 8:00 PM",
+    time: "4:00 PM - 5:45 PM",
     type: "Social",
-    title: "Perry Fishburne courts 3-8",
+    title: "Snyder courts 4, 5, 9, & 10",
     category: "social",
   },
   {
