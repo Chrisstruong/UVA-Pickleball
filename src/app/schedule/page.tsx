@@ -37,6 +37,13 @@ const schedule = [
     category: "social",
   },
   {
+    day: "WED",
+    time: "6:00 PM - 8:00 PM",
+    type: "Social",
+    title: "Perry Fishburne courts 3-8",
+    category: "social",
+  },
+  {
     day: "THU",
     time: "4:00 PM - 5:45 PM",
     type: "Tournament",
