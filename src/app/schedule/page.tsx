@@ -220,7 +220,7 @@ export default function SchedulePage() {
             </h2>
 
             <p className="mt-3 max-w-lg text-sm leading-6 text-white/85">
-              Social meets Monday and Wednesday from 4:00 PM to 5:45 PM at Snyder, Wednesday from 6-8 at Perry fishburne is extra court time! and Tuesday and Thursday from 6:00 PM to 8:00 PM at Perry Fishburne.
+              Social meets Monday and Wednesday from 4:00 PM to 5:45 PM at Snyder, Wednesday from 6-8 PM at Perry fishburne is extra court time! and Tuesday and Thursday from 6:00 PM to 8:00 PM at Perry Fishburne.
               <br />
               <br />
               General meets Friday from 3:30 PM to 5:30 PM at Snyder.
