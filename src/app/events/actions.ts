@@ -1,14 +1,25 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
-export async function registerForEvent(formData: FormData) {
+export type RegistrationState = {
+  status: "idle" | "success" | "error";
+  message: string;
+};
+
+export async function registerForEvent(
+  _previousState: RegistrationState,
+  formData: FormData
+): Promise<RegistrationState> {
   const eventId = formData.get("eventId");
 
-  if (typeof eventId !== "string") {
-    throw new Error("Invalid event ID.");
+  if (!eventId || typeof eventId !== "string") {
+    return {
+      status: "error",
+      message: "This event could not be identified. Please refresh and try again.",
+    };
   }
 
   const supabase = await createClient();
@@ -20,10 +31,13 @@ export async function registerForEvent(formData: FormData) {
   } = await supabase.auth.getUser();
 
   if (userError || !user) {
-    throw new Error("You must be signed in to register.");
+    return {
+      status: "error",
+      message: "You must be signed in to register.",
+    };
   }
 
-  // 2. Get user's club group
+  // 2. Get profile
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("club_group")
@@ -31,14 +45,18 @@ export async function registerForEvent(formData: FormData) {
     .single();
 
   if (profileError || !profile) {
-    throw new Error("Unable to find your member profile.");
+    return {
+      status: "error",
+      message: "Unable to find your member profile.",
+    };
   }
 
-  // 3. Get event requirements
+  // 3. Get event
   const { data: event, error: eventError } = await supabase
     .from("events")
     .select(`
       id,
+      capacity,
       required_group,
       registration_open
     `)
@@ -46,38 +64,77 @@ export async function registerForEvent(formData: FormData) {
     .single();
 
   if (eventError || !event) {
-    throw new Error("Event not found.");
+    return {
+      status: "error",
+      message: "This event is no longer available.",
+    };
   }
 
-  // 4. Registration must be open
   if (!event.registration_open) {
-    throw new Error("Registration for this event is closed.");
+    return {
+      status: "error",
+      message: "Registration for this event is closed.",
+    };
   }
 
-  // 5. Check group eligibility
+  // 4. Check eligibility
   if (
     event.required_group &&
     profile.club_group !== event.required_group
   ) {
-    throw new Error(
-      `This event is only available to ${event.required_group} members.`
-    );
+    return {
+      status: "error",
+      message: `This event is only available to ${event.required_group} members.`,
+    };
   }
 
-  // 6. Prevent duplicate registration
-  const { data: existingRegistration } = await supabase
+  // 5. Check existing registration
+  const {
+    data: existingRegistration,
+    error: existingError,
+  } = await supabaseAdmin
     .from("event_registrations")
     .select("id, status")
     .eq("event_id", eventId)
     .eq("user_id", user.id)
     .maybeSingle();
 
-  if (existingRegistration) {
-    throw new Error("You are already registered for this event.");
+  if (existingError) {
+    return {
+      status: "error",
+      message: "Unable to check your registration. Please try again.",
+    };
   }
 
-  // 7. Register
-  const { error: registrationError } = await supabase
+  if (existingRegistration) {
+    return {
+      status: "error",
+      message: "You are already registered for this event.",
+    };
+  }
+
+  const { count, error: countError } = await supabaseAdmin
+    .from("event_registrations")
+    .select("id", { count: "exact", head: true })
+    .eq("event_id", eventId)
+    .eq("status", "registered");
+
+  if (countError) {
+    return {
+      status: "error",
+      message: "Unable to check event availability. Please try again.",
+    };
+  }
+
+  if (event.capacity !== null && (count ?? 0) >= event.capacity) {
+    return {
+      status: "error",
+      message: "This event has reached capacity.",
+    };
+  }
+
+  // 6. Insert registration
+  const { error: registrationError } = await supabaseAdmin
     .from("event_registrations")
     .insert({
       event_id: eventId,
@@ -86,9 +143,24 @@ export async function registerForEvent(formData: FormData) {
     });
 
   if (registrationError) {
-    console.error("Registration error:", registrationError);
-    throw new Error("Unable to register for this event.");
+    console.error("Event registration insert failed:", {
+      code: registrationError.code,
+      message: registrationError.message,
+    });
+
+    return {
+      status: "error",
+      message:
+        registrationError.code === "23505"
+          ? "You are already registered for this event."
+          : "Registration failed. Please try again.",
+    };
   }
 
   revalidatePath("/events");
+
+  return {
+    status: "success",
+    message: "You are registered for this event.",
+  };
 }

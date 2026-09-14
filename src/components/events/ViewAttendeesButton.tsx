@@ -3,18 +3,23 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 type ViewAttendeesButtonProps = {
   eventTitle: string;
   attendees: string[];
   capacity: number;
+  registrationCount?: number;
+  canViewAttendees: boolean;
 };
 
 export default function ViewAttendeesButton({
   eventTitle,
   attendees,
   capacity,
+  registrationCount = attendees.length,
+  canViewAttendees,
 }: ViewAttendeesButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -30,6 +35,19 @@ export default function ViewAttendeesButton({
       document.body.style.overflow = originalOverflow;
     };
   }, [isOpen]);
+
+
+  if (!canViewAttendees) {
+    return (
+      <Button
+        asChild
+        variant="outline"
+        className="w-full font-heading uppercase tracking-wide"
+      >
+        <Link href="/login">Sign In to View Attendees</Link>
+      </Button>
+    );
+  }
 
   return (
     <>
@@ -54,7 +72,7 @@ export default function ViewAttendeesButton({
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="font-heading text-xs font-bold uppercase tracking-widest text-orange-600">
-                    {attendees.length}/{capacity} Signed Up
+                    {registrationCount}/{capacity} Signed Up
                   </p>
                   <h3
                     id={`${eventTitle}-attendees-title`}
@@ -75,14 +93,20 @@ export default function ViewAttendeesButton({
               </div>
 
               <ul className="mt-6 min-h-0 overflow-y-auto rounded-md border border-slate-200">
-                {attendees.map((attendee) => (
-                  <li
-                    key={attendee}
-                    className="border-b border-slate-100 px-4 py-3 text-sm text-slate-700 last:border-b-0"
-                  >
-                    {attendee}
+                {attendees.length > 0 ? (
+                  attendees.map((attendee, index) => (
+                    <li
+                      key={`${attendee}-${index}`}
+                      className="border-b border-slate-100 px-4 py-3 text-sm text-slate-700 last:border-b-0"
+                    >
+                      {attendee}
+                    </li>
+                  ))
+                ) : (
+                  <li className="px-4 py-6 text-center text-sm text-slate-500">
+                    Attendee names are not available yet.
                   </li>
-                ))}
+                )}
               </ul>
             </div>
           </div>,

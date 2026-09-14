@@ -1,10 +1,7 @@
-import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import GroupsClient from "@/components/admin/GroupsClient";
 
 export default async function GroupsPage() {
-  const supabase = await createClient();
-
   const { data: profiles, error } = await supabaseAdmin
     .from("profiles")
     .select(

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CalendarDays, Clock, MapPin, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 import ScrollToUpcomingEventsButton from "@/components/events/ScrollToUpcomingEventsButton";
@@ -25,86 +26,38 @@ type ClubEvent = {
   registration_open: boolean;
 };
 
-const events: ClubEvent[] = [
-  {
-    title: "Fall 2026 Tryout Day 1",
-    type: "Tryout",
-    date: "Monday 08/31",
-    time: "Your preference",
-    location: "Snyder Tennis Center, Court 9",
-    attendees: ["Sample", "Sample", "Sample", "Sample"],
-    capacity: 504,
-    image: "/images/events/Gengar.png",
-    status: "open",
-    signupUrl: "https://docs.google.com/spreadsheets/d/1qt90UR_xtAeMSM6AJRSKwr4VOrTozdMEPMNmA7wGLqk/edit?gid=315280905#gid=315280905"
-  },
-  {
-    title: "Fall 2026 Tryout Day 2",
-    type: "Tryout",
-    date: "Tuesday 09/01",
-    time: "Your preference",
-    location: "Snyder Tennis Center, Court 9",
-    attendees: ["Sample", "Sample", "Sample", "Sample"],
-    capacity: 504,
-    image: "/images/events/Gengar.png",
-    status: "open",
-    signupUrl: "https://docs.google.com/spreadsheets/d/1qt90UR_xtAeMSM6AJRSKwr4VOrTozdMEPMNmA7wGLqk/edit?gid=1509728370#gid=1509728370"
-  },
-  {
-    title: "Fall 2026 Tryout Day 3",
-    type: "Tryout",
-    date: "Wednesday 09/02",
-    time: "Your preference",
-    location: "Snyder Tennis Center, Court 9",
-    attendees: ["Sample", "Sample", "Sample", "Sample"],
-    capacity: 504,
-    image: "/images/events/Snorlax.png",
-    status: "open",
-    signupUrl: "https://docs.google.com/spreadsheets/d/1qt90UR_xtAeMSM6AJRSKwr4VOrTozdMEPMNmA7wGLqk/edit?gid=1228192920#gid=1228192920",
-  },
-  {
-    title: "Fall 2026 Tryout Day 4",
-    type: "Tryout",
-    date: "Thursday 09/03",
-    time: "Your preference",
-    location: "Snyder Tennis Center, Court 9",
-    attendees: ["Sample", "Sample", "Sample", "Sample"],
-    capacity: 504,
-    image: "/images/events/Snorlax.png",
-    status: "open",
-    signupUrl: "https://docs.google.com/spreadsheets/d/1qt90UR_xtAeMSM6AJRSKwr4VOrTozdMEPMNmA7wGLqk/edit?gid=677840540#gid=677840540"
-  },
-  {
-    title: "Fall 2026 Tryout Day 5",
-    type: "Tryout",
-    date: "Friday 09/04",
-    time: "Your preference",
-    location: "Snyder Tennis Center, Court 9",
-    attendees: ["Sample", "Sample", "Sample", "Sample"],
-    capacity: 504,
-    image: "/images/events/Pikachu.png",
-    status: "open",
-    signupUrl: "https://docs.google.com/spreadsheets/d/1qt90UR_xtAeMSM6AJRSKwr4VOrTozdMEPMNmA7wGLqk/edit?gid=1648291452#gid=1648291452"
-  },
-  {
-    title: "Fall 2026 Tryout Day 6",
-    type: "Tryout",
-    date: "Saturday 09/05",
-    time: "Your preference",
-    location: "Snyder Tennis Center, Court 9 ",
-    attendees: ["Sample", "Sample", "Sample", "Sample"],
-    capacity: 504,
-    image: "/images/events/Pikachu.png",
-    status: "open",
-    signupUrl: "https://docs.google.com/spreadsheets/d/1qt90UR_xtAeMSM6AJRSKwr4VOrTozdMEPMNmA7wGLqk/edit?gid=2067550300#gid=2067550300"
-  },
+const eventDateFormatter = new Intl.DateTimeFormat("en-US", {
+  timeZone: "America/New_York",
+  weekday: "long",
+  month: "short",
+  day: "numeric",
+});
 
-];
+const eventTimeFormatter = new Intl.DateTimeFormat("en-US", {
+  timeZone: "America/New_York",
+  hour: "numeric",
+  minute: "2-digit",
+});
+
+function formatEventDate(startTime: string) {
+  return eventDateFormatter.format(new Date(startTime));
+}
+
+function formatEventTime(startTime: string, endTime: string | null) {
+  const start = eventTimeFormatter.format(new Date(startTime));
+
+  if (!endTime) {
+    return start;
+  }
+
+  return `${start}–${eventTimeFormatter.format(new Date(endTime))}`;
+}
+
 
 
 export default async function EventsPage() {
   const supabase = await createClient();
-  let registeredEventIds = new Set<string>();
+  let registeredEventIds: Set<string> = new Set();
 
   // 1. Get signed-in user
   const {
@@ -128,24 +81,91 @@ export default async function EventsPage() {
   const { data: events, error } = await supabase
     .from("events")
     .select(`
-      id,
-      title,
-      description,
-      event_type,
-      location,
-      image_url,
-      start_time,
-      end_time,
-      capacity,
-      required_group,
-      registration_open
-    `)
+    id,
+    title,
+    description,
+    event_type,
+    location,
+    image_url,
+    start_time,
+    end_time,
+    capacity,
+    required_group,
+    registration_open
+  `)
     .order("start_time", { ascending: true });
-
   if (error) {
     console.error("Failed to fetch events:", error);
   }
 
+  const eventList: ClubEvent[] = events ?? [];
+  const registrationCounts = new Map<string, number>();
+  const attendeeNamesByEvent = new Map<string, string[]>();
+
+  if (eventList.length > 0) {
+    const { data: activeRegistrations, error: registrationsError } =
+      await supabaseAdmin
+        .from("event_registrations")
+        .select("event_id, user_id")
+        .in(
+          "event_id",
+          eventList.map((event) => event.id)
+        )
+        .eq("status", "registered");
+
+    if (registrationsError) {
+      console.error("Failed to fetch registration counts:", registrationsError);
+    }
+
+    activeRegistrations?.forEach((registration) => {
+      registrationCounts.set(
+        registration.event_id,
+        (registrationCounts.get(registration.event_id) ?? 0) + 1
+      );
+    });
+
+    if (user && activeRegistrations && activeRegistrations.length > 0) {
+      const attendeeIds = [
+        ...new Set(
+          activeRegistrations.map((registration) => registration.user_id)
+        ),
+      ];
+
+      const { data: attendeeProfiles, error: attendeeProfilesError } =
+        await supabaseAdmin
+          .from("profiles")
+          .select("id, full_name")
+          .in("id", attendeeIds);
+
+      if (attendeeProfilesError) {
+        console.error(
+          "Failed to fetch attendee profiles:",
+          attendeeProfilesError
+        );
+      }
+
+      const attendeeNameById = new Map(
+        attendeeProfiles?.map((attendee) => [
+          attendee.id,
+          attendee.full_name || "Club Member",
+        ]) ?? []
+      );
+
+      activeRegistrations.forEach((registration) => {
+        const existingNames =
+          attendeeNamesByEvent.get(registration.event_id) ?? [];
+
+        attendeeNamesByEvent.set(registration.event_id, [
+          ...existingNames,
+          attendeeNameById.get(registration.user_id) ?? "Club Member",
+        ]);
+      });
+
+      attendeeNamesByEvent.forEach((names) => {
+        names.sort((first, second) => first.localeCompare(second));
+      });
+    }
+  }
 
   if (user) {
     const { data: registrations } = await supabase
@@ -272,83 +292,76 @@ export default async function EventsPage() {
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 md:gap-8">
-            {events.map((event) => (
-              <article
-                key={event.title}
-                className="overflow-hidden rounded-xl bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-              >
-                <div className="relative h-44 sm:h-52">
-                  <Image
-                    src={event.image}
-                    alt={event.title}
-                    fill
-                    className="object-cover"
-                  />
-                  <span className="absolute left-3 top-3 rounded bg-orange-600 px-2 py-1 font-heading text-[10px] uppercase tracking-widest text-white sm:left-4 sm:top-4">
-                    {event.type}
-                  </span>
-                  <span className="absolute right-3 top-3 rounded bg-white px-2 py-1 text-xs font-bold text-slate-700 sm:right-4 sm:top-4">
-                    <Users className="mr-1 inline h-3 w-3" />
-                    {event.attendees.length}/{event.capacity}
-                  </span>
-                </div>
+            {eventList.map((event) => {
+              const registrationCount = registrationCounts.get(event.id) ?? 0;
+              const attendees = attendeeNamesByEvent.get(event.id) ?? [];
+              const isFull = registrationCount >= event.capacity;
 
-                <div className="p-5 sm:p-6">
-                  <h3 className="font-heading text-xl font-bold tracking-tight sm:text-2xl">
-                    {event.title}
-                  </h3>
-
-                  <div className="mt-4 space-y-3 text-sm text-muted-foreground">
-                    <p className="flex items-start gap-2">
-                      <CalendarDays className="mt-0.5 h-4 w-4 shrink-0 text-orange-600" />
-                      {event.date}
-                    </p>
-                    <p className="flex items-start gap-2">
-                      <Clock className="mt-0.5 h-4 w-4 shrink-0 text-orange-600" />
-                      {event.time}
-                    </p>
-                    <p className="flex items-start gap-2">
-                      <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-orange-600" />
-                      {event.location}
-                    </p>
+              return (
+                <article
+                  key={event.id}
+                  className="overflow-hidden rounded-xl bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                >
+                  <div className="relative h-44 sm:h-52">
+                    <Image
+                      src={event.image_url ?? "/images/events/Pikachu.png"}
+                      alt={event.title}
+                      fill
+                      className="object-cover"
+                    />
+                    <span className="absolute left-3 top-3 rounded bg-orange-600 px-2 py-1 font-heading text-[10px] uppercase tracking-widest text-white sm:left-4 sm:top-4">
+                      {event.event_type ?? "Club Event"}
+                    </span>
+                    <span className="absolute right-3 top-3 rounded bg-white px-2 py-1 text-xs font-bold text-slate-700 sm:right-4 sm:top-4">
+                      <Users className="mr-1 inline h-3 w-3" />
+                      {registrationCount}/{event.capacity}
+                    </span>
                   </div>
 
-                  <div className="mt-6 grid gap-3 lg:grid-cols-2">
-                    {event.status === "full" ? (
-                      <Button
-                        className="w-full bg-orange-600 font-heading uppercase tracking-wide hover:bg-orange-700"
-                        disabled
-                      >
-                        Event Full
-                      </Button>
-                    ) : (
+                  <div className="p-5 sm:p-6">
+                    <h3 className="font-heading text-xl font-bold tracking-tight sm:text-2xl">
+                      {event.title}
+                    </h3>
+
+                    <div className="mt-4 space-y-3 text-sm text-muted-foreground">
+                      <p className="flex items-start gap-2">
+                        <CalendarDays className="mt-0.5 h-4 w-4 shrink-0 text-orange-600" />
+                        {formatEventDate(event.start_time)}
+                      </p>
+                      <p className="flex items-start gap-2">
+                        <Clock className="mt-0.5 h-4 w-4 shrink-0 text-orange-600" />
+                        {formatEventTime(event.start_time, event.end_time)}
+                      </p>
+                      <p className="flex items-start gap-2">
+                        <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-orange-600" />
+                        {event.location ?? "Location to be announced"}
+                      </p>
+                    </div>
+
+                    <div className="mt-6 grid gap-3 lg:grid-cols-2">
                       <EventRegistrationButton
                         eventId={event.id}
                         isSignedIn={!!user}
                         isRegistered={registeredEventIds.has(event.id)}
+                        isFull={isFull}
                         userGroup={profile?.club_group ?? null}
                         requiredGroup={event.required_group}
                         registrationOpen={event.registration_open}
                       />
-                    )}
 
-                    <ViewAttendeesButton
-                      eventTitle={event.title}
-                      attendees={event.attendees}
-                      capacity={event.capacity}
-                    />
+                      <ViewAttendeesButton
+                        eventTitle={event.title}
+                        attendees={attendees}
+                        capacity={event.capacity}
+                        registrationCount={registrationCount}
+                        canViewAttendees={!!user}
+                      />
+                    </div>
+
                   </div>
-
-                  {event.type === "Tournament" && event.slug && (
-                    <Button asChild variant="secondary" className="mt-3 w-full">
-                      <Link href={`/events/${event.slug}`}>
-                        View Event Details
-                      </Link>
-                    </Button>
-                  )}
-                </div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
         </div>
       </section>
