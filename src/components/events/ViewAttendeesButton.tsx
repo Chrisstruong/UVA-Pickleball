@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 type ViewAttendeesButtonProps = {
   eventTitle: string;
   attendees: string[];
+  waitlistedAttendees: string[];
   capacity: number;
   registrationCount?: number;
   canViewAttendees: boolean;
@@ -17,6 +18,7 @@ type ViewAttendeesButtonProps = {
 export default function ViewAttendeesButton({
   eventTitle,
   attendees,
+  waitlistedAttendees,
   capacity,
   registrationCount = attendees.length,
   canViewAttendees,
@@ -92,22 +94,54 @@ export default function ViewAttendeesButton({
                 </button>
               </div>
 
-              <ul className="mt-6 min-h-0 overflow-y-auto rounded-md border border-slate-200">
-                {attendees.length > 0 ? (
-                  attendees.map((attendee, index) => (
-                    <li
-                      key={`${attendee}-${index}`}
-                      className="border-b border-slate-100 px-4 py-3 text-sm text-slate-700 last:border-b-0"
-                    >
-                      {attendee}
-                    </li>
-                  ))
-                ) : (
-                  <li className="px-4 py-6 text-center text-sm text-slate-500">
-                    Attendee names are not available yet.
-                  </li>
-                )}
-              </ul>
+              <div className="mt-6 min-h-0 space-y-6 overflow-y-auto pr-1">
+                <section>
+                  <h4 className="text-sm font-bold text-[#07192d]">
+                    Registered ({attendees.length})
+                  </h4>
+                  <ul className="mt-2 rounded-md border border-slate-200">
+                    {attendees.length > 0 ? (
+                      attendees.map((attendee, index) => (
+                        <li
+                          key={`${attendee}-${index}`}
+                          className="border-b border-slate-100 px-4 py-3 text-sm text-slate-700 last:border-b-0"
+                        >
+                          {attendee}
+                        </li>
+                      ))
+                    ) : (
+                      <li className="px-4 py-6 text-center text-sm text-slate-500">
+                        No registered attendees yet.
+                      </li>
+                    )}
+                  </ul>
+                </section>
+
+                <section>
+                  <h4 className="text-sm font-bold text-[#07192d]">
+                    Waitlist ({waitlistedAttendees.length})
+                  </h4>
+                  <ul className="mt-2 rounded-md border border-amber-200 bg-amber-50/40">
+                    {waitlistedAttendees.length > 0 ? (
+                      waitlistedAttendees.map((attendee, index) => (
+                        <li
+                          key={`${attendee}-${index}`}
+                          className="flex gap-3 border-b border-amber-100 px-4 py-3 text-sm text-slate-700 last:border-b-0"
+                        >
+                          <span className="font-semibold text-amber-700">
+                            {index + 1}.
+                          </span>
+                          <span>{attendee}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li className="px-4 py-6 text-center text-sm text-slate-500">
+                        No one is currently waitlisted.
+                      </li>
+                    )}
+                  </ul>
+                </section>
+              </div>
             </div>
           </div>,
           document.body,

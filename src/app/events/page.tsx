@@ -102,33 +102,37 @@ export default async function EventsPage() {
   const eventList: ClubEvent[] = events ?? [];
   const registrationCounts = new Map<string, number>();
   const attendeeNamesByEvent = new Map<string, string[]>();
+  const waitlistNamesByEvent = new Map<string, string[]>();
 
   if (eventList.length > 0) {
-    const { data: activeRegistrations, error: registrationsError } =
+    const { data: eventRegistrations, error: registrationsError } =
       await supabaseAdmin
         .from("event_registrations")
-        .select("event_id, user_id")
+        .select("event_id, user_id, status, registered_at")
         .in(
           "event_id",
           eventList.map((event) => event.id)
         )
-        .eq("status", "registered");
+        .in("status", ["registered", "waitlisted"])
+        .order("registered_at", { ascending: true });
 
     if (registrationsError) {
       console.error("Failed to fetch registration counts:", registrationsError);
     }
 
-    activeRegistrations?.forEach((registration) => {
-      registrationCounts.set(
-        registration.event_id,
-        (registrationCounts.get(registration.event_id) ?? 0) + 1
-      );
+    eventRegistrations?.forEach((registration) => {
+      if (registration.status === "registered") {
+        registrationCounts.set(
+          registration.event_id,
+          (registrationCounts.get(registration.event_id) ?? 0) + 1
+        );
+      }
     });
 
-    if (user && activeRegistrations && activeRegistrations.length > 0) {
+    if (user && eventRegistrations && eventRegistrations.length > 0) {
       const attendeeIds = [
         ...new Set(
-          activeRegistrations.map((registration) => registration.user_id)
+          eventRegistrations.map((registration) => registration.user_id)
         ),
       ];
 
@@ -152,11 +156,15 @@ export default async function EventsPage() {
         ]) ?? []
       );
 
-      activeRegistrations.forEach((registration) => {
+      eventRegistrations.forEach((registration) => {
+        const targetMap =
+          registration.status === "waitlisted"
+            ? waitlistNamesByEvent
+            : attendeeNamesByEvent;
         const existingNames =
-          attendeeNamesByEvent.get(registration.event_id) ?? [];
+          targetMap.get(registration.event_id) ?? [];
 
-        attendeeNamesByEvent.set(registration.event_id, [
+        targetMap.set(registration.event_id, [
           ...existingNames,
           attendeeNameById.get(registration.user_id) ?? "Club Member",
         ]);
@@ -169,11 +177,19 @@ export default async function EventsPage() {
   }
 
   if (user) {
-    const { data: registrations } = await supabase
+    const { data: registrations, error: userRegistrationsError } =
+      await supabaseAdmin
       .from("event_registrations")
       .select("event_id, status")
       .eq("user_id", user.id)
       .in("status", ["registered", "waitlisted"]);
+
+    if (userRegistrationsError) {
+      console.error(
+        "Failed to fetch the current user's registrations:",
+        userRegistrationsError
+      );
+    }
 
     registeredEventIds = new Set(
       registrations
@@ -304,7 +320,16 @@ export default async function EventsPage() {
             {eventList.map((event) => {
               const registrationCount = registrationCounts.get(event.id) ?? 0;
               const attendees = attendeeNamesByEvent.get(event.id) ?? [];
+              const waitlistedAttendees =
+                waitlistNamesByEvent.get(event.id) ?? [];
               const isFull = registrationCount >= event.capacity;
+              const currentUserRegistrationStatus = registeredEventIds.has(
+                event.id
+              )
+                ? "registered"
+                : waitlistedEventIds.has(event.id)
+                  ? "waitlisted"
+                  : "none";
 
               return (
                 <article
@@ -349,6 +374,7 @@ export default async function EventsPage() {
 
                     <div className="mt-6 grid gap-3 lg:grid-cols-2">
                       <EventRegistrationButton
+                        key={`${event.id}-${currentUserRegistrationStatus}`}
                         eventId={event.id}
                         isSignedIn={!!user}
                         isRegistered={registeredEventIds.has(event.id)}
@@ -362,6 +388,7 @@ export default async function EventsPage() {
                       <ViewAttendeesButton
                         eventTitle={event.title}
                         attendees={attendees}
+                        waitlistedAttendees={waitlistedAttendees}
                         capacity={event.capacity}
                         registrationCount={registrationCount}
                         canViewAttendees={!!user}

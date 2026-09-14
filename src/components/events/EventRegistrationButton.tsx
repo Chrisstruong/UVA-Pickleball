@@ -3,7 +3,10 @@
 import Link from "next/link";
 import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
-import { registerForEvent } from "@/app/events/actions";
+import {
+  cancelEventRegistration,
+  registerForEvent,
+} from "@/app/events/actions";
 import type { RegistrationState } from "@/app/events/actions";
 
 const initialRegistrationState: RegistrationState = {
@@ -36,41 +39,50 @@ export default function EventRegistrationButton({
     registerForEvent,
     initialRegistrationState
   );
+  const [cancellationState, cancellationAction, isCancelling] = useActionState(
+    cancelEventRegistration,
+    initialRegistrationState
+  );
 
   const registeredAfterSubmit =
     state.status === "success" && state.registrationStatus === "registered";
   const waitlistedAfterSubmit =
     state.status === "success" && state.registrationStatus === "waitlisted";
+  const cancellationSucceeded = cancellationState.status === "success";
+  const currentlyRegistered =
+    (isRegistered || registeredAfterSubmit) && !cancellationSucceeded;
+  const currentlyWaitlisted =
+    (isWaitlisted || waitlistedAfterSubmit) && !cancellationSucceeded;
+  const eventIsFull = cancellationSucceeded
+    ? cancellationState.eventIsFull ?? isFull
+    : isFull;
 
-  if (isRegistered || registeredAfterSubmit) {
+  if (currentlyRegistered || currentlyWaitlisted) {
     return (
-      <div>
-        <Button className="w-full" disabled>
-          Registered
-        </Button>
-        <p
-          className="mt-2 text-sm font-medium text-emerald-700"
-          aria-live="polite"
+      <form action={cancellationAction}>
+        <input type="hidden" name="eventId" value={eventId} />
+        <Button
+          type="submit"
+          variant="outline"
+          disabled={isCancelling}
+          className="w-full border-red-200 font-heading uppercase tracking-wide text-red-700 hover:bg-red-50 hover:text-red-800"
         >
-          {state.message || "You are registered for this event."}
-        </p>
-      </div>
-    );
-  }
+          {isCancelling
+            ? "Cancelling..."
+            : currentlyRegistered
+              ? "Cancel Registration"
+              : "Leave Waitlist"}
+        </Button>
 
-  if (isWaitlisted || waitlistedAfterSubmit) {
-    return (
-      <div>
-        <Button className="w-full" disabled>
-          Waitlisted
-        </Button>
-        <p
-          className="mt-2 text-sm font-medium text-amber-700"
-          aria-live="polite"
-        >
-          {state.message || "You are on the waitlist for this event."}
-        </p>
-      </div>
+        {cancellationState.status === "error" && (
+          <p
+            className="mt-2 text-sm font-medium text-red-700"
+            aria-live="polite"
+          >
+            {cancellationState.message}
+          </p>
+        )}
+      </form>
     );
   }
 
@@ -110,13 +122,22 @@ export default function EventRegistrationButton({
         className="w-full bg-orange-600 font-heading uppercase tracking-wide hover:bg-orange-700"
       >
         {isPending
-          ? isFull
+          ? eventIsFull
             ? "Joining Waitlist..."
             : "Registering..."
-          : isFull
+          : eventIsFull
             ? "Join Waitlist"
             : "Register"}
       </Button>
+
+      {cancellationSucceeded && (
+        <p
+          className="mt-2 text-sm font-medium text-emerald-700"
+          aria-live="polite"
+        >
+          {cancellationState.message}
+        </p>
+      )}
 
       {state.status === "error" && (
         <p

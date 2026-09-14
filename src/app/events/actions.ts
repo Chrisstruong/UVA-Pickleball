@@ -8,7 +8,178 @@ export type RegistrationState = {
   status: "idle" | "success" | "error";
   message: string;
   registrationStatus?: "registered" | "waitlisted";
+  eventIsFull?: boolean;
 };
+
+export async function cancelEventRegistration(
+  _previousState: RegistrationState,
+  formData: FormData
+): Promise<RegistrationState> {
+  const eventId = formData.get("eventId");
+
+  if (!eventId || typeof eventId !== "string") {
+    return {
+      status: "error",
+      message: "This event could not be identified. Please refresh and try again.",
+    };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return {
+      status: "error",
+      message: "You must be signed in to cancel a registration.",
+    };
+  }
+
+  const { data: registration, error: registrationError } =
+    await supabaseAdmin
+      .from("event_registrations")
+      .select("id, status")
+      .eq("event_id", eventId)
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+  if (registrationError) {
+    console.error("Registration lookup failed:", registrationError);
+    return {
+      status: "error",
+      message: "Unable to find your registration. Please try again.",
+    };
+  }
+
+  if (!registration) {
+    return {
+      status: "error",
+      message: "You do not have a registration for this event.",
+    };
+  }
+
+  if (
+    registration.status !== "registered" &&
+    registration.status !== "waitlisted"
+  ) {
+    return {
+      status: "error",
+      message: "This registration cannot be cancelled.",
+    };
+  }
+
+  const { data: event, error: eventError } = await supabaseAdmin
+    .from("events")
+    .select("capacity")
+    .eq("id", eventId)
+    .single();
+
+  if (eventError || !event) {
+    console.error("Event capacity lookup failed:", eventError);
+    return {
+      status: "error",
+      message: "Unable to find this event. Please try again.",
+    };
+  }
+
+  const { data: deletedRegistration, error: deleteError } =
+    await supabaseAdmin
+      .from("event_registrations")
+      .delete()
+      .eq("id", registration.id)
+      .eq("user_id", user.id)
+      .select("id")
+      .maybeSingle();
+
+  if (deleteError || !deletedRegistration) {
+    console.error("Registration cancellation failed:", deleteError);
+    return {
+      status: "error",
+      message: "Unable to cancel your registration. Please try again.",
+    };
+  }
+
+  const { count, error: countError } = await supabaseAdmin
+    .from("event_registrations")
+    .select("id", { count: "exact", head: true })
+    .eq("event_id", eventId)
+    .eq("status", "registered");
+
+  if (countError) {
+    console.error("Registered attendee count failed:", countError);
+    revalidatePath("/events");
+    return {
+      status: "error",
+      message:
+        "Your registration was cancelled, but the waitlist could not be updated.",
+    };
+  }
+
+  let registeredCount = count ?? 0;
+
+  if (
+    registration.status === "registered" &&
+    registeredCount < event.capacity
+  ) {
+    const { data: nextWaitlisted, error: waitlistError } =
+      await supabaseAdmin
+        .from("event_registrations")
+        .select("id")
+        .eq("event_id", eventId)
+        .eq("status", "waitlisted")
+        .order("registered_at", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+
+    if (waitlistError) {
+      console.error("Waitlist lookup failed:", waitlistError);
+      revalidatePath("/events");
+      return {
+        status: "error",
+        message:
+          "Your registration was cancelled, but the waitlist could not be updated.",
+      };
+    }
+
+    if (nextWaitlisted) {
+      const { data: promotedRegistration, error: promotionError } =
+        await supabaseAdmin
+          .from("event_registrations")
+          .update({ status: "registered" })
+          .eq("id", nextWaitlisted.id)
+          .eq("status", "waitlisted")
+          .select("id")
+          .maybeSingle();
+
+      if (promotionError) {
+        console.error("Waitlist promotion failed:", promotionError);
+        revalidatePath("/events");
+        return {
+          status: "error",
+          message:
+            "Your registration was cancelled, but the waitlist could not be updated.",
+        };
+      }
+
+      if (promotedRegistration) {
+        registeredCount += 1;
+      }
+    }
+  }
+
+  revalidatePath("/events");
+
+  return {
+    status: "success",
+    message:
+      registration.status === "registered"
+        ? "Your registration was cancelled."
+        : "You have left the waitlist.",
+    eventIsFull: registeredCount >= event.capacity,
+  };
+}
 
 export async function registerForEvent(
   _previousState: RegistrationState,
