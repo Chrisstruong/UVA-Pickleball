@@ -32,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${bebas.variable} ${montserrat.variable} ${inter.variable}`}
+    <html lang="en" data-scroll-behavior="smooth" className={`${bebas.variable} ${montserrat.variable} ${inter.variable}`}
 >
       <body className={inter.className}>
         <Navbar />

@@ -27,7 +27,6 @@ export default function ProfilePage() {
     const [fullName, setFullName] = useState("");
     const [group, setGroup] = useState("");
     const [membershipStatus, setMembershipStatus] = useState("");
-    const [tryoutResult, setTryoutResult] = useState("");
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [editedName, setEditedName] = useState("");
@@ -50,7 +49,7 @@ export default function ProfilePage() {
             const { data: profile, error } = await supabase
                 .from("profiles")
                 .select(
-                    "full_name, avatar_url, club_group, membership_status, tryout_result, email_verified"
+                    "full_name, avatar_url, club_group, membership_status, email_verified"
                 )
                 .eq("id", user.id)
                 .single();
@@ -65,7 +64,6 @@ export default function ProfilePage() {
             setAvatarUrl(profile.avatar_url ?? null);
             setGroup(profile.club_group ?? "");
             setMembershipStatus(profile.membership_status ?? "Pending");
-            setTryoutResult(profile.tryout_result ?? "");
             setEmailVerified(profile.email_verified ?? false);
             setLoading(false);
         };

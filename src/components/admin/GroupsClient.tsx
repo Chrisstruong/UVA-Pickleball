@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useMemo,
-  useState,
-  useTransition,
-} from "react";
+import { useMemo, useState, useTransition } from "react";
 import { Search, Users } from "lucide-react";
 import { updateMemberGroup } from "@/app/admin/groups/actions";
 
@@ -129,9 +124,6 @@ export default function GroupsClient({
     startIndex + MEMBERS_PER_PAGE
   );
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [search, groupFilter]);
   return (
     <div className="px-6 py-10 md:px-10">
       <div className="mx-auto max-w-[1400px]">
@@ -204,9 +196,10 @@ export default function GroupsClient({
 
                 <Input
                   value={search}
-                  onChange={(event) =>
-                    setSearch(event.target.value)
-                  }
+                  onChange={(event) => {
+                    setSearch(event.target.value);
+                    setCurrentPage(1);
+                  }}
                   placeholder="Search by name or UVA email..."
                   className="pl-9"
                 />
@@ -216,9 +209,10 @@ export default function GroupsClient({
             {/* Tabs */}
             <Tabs
               value={groupFilter}
-              onValueChange={(value) =>
-                setGroupFilter(value as GroupFilter)
-              }
+              onValueChange={(value) => {
+                setGroupFilter(value as GroupFilter);
+                setCurrentPage(1);
+              }}
               className="mt-5"
             >
               <TabsList className="flex h-auto flex-wrap">

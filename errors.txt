@@ -1,0 +1,131 @@
+The main slowdown is Supabase latency amplified by sequential database queries—not the Presence popup.
+Measured locally:
+
+Request	Time
+First /events response	21.1s
+Second response	5.37s
+Third/warm response	1.46s
+Cold events query	5.99s
+Cold registrations query	10.78s, returned 504
+Warm events query	0.72s
+Warm registrations query	0.61s
+
+
+The payloads were tiny, so data volume is not the cause. Supabase appears cold or temporarily resource-constrained, and the page compounds this through a request waterfall.
+For signed-in users, [page.tsx (line 60)](/Users/_o_chrisstruong_o_/Projects/uva-pickleball/src/app/events/page.tsx:60) can perform these sequentially:
+1. Authenticate the user.
+2. Fetch their profile.
+3. Fetch events.
+4. Fetch all registrations.
+5. Fetch attendee profiles.
+6. Fetch the current user’s registrations.
+Because each await blocks the next query, six 600–700 ms warm requests can still take several seconds. When Supabase is cold, it becomes dramatically worse.
+Additional findings:
+- The Navbar makes another user/profile request after hydration, adding network activity but not blocking the initial HTML.
+- Attendee names are fetched for every event before anyone opens “View Attendees.”
+- All registration rows are downloaded so counts can be calculated in JavaScript.
+- Event images may delay visual completion, but they do not explain the 21-second server response.
+- Presence starts after hydration, so it is not responsible for the initial delay.
+- Development-mode route compilation may add extra first-navigation latency.
+The strongest fix would be to parallelize independent queries, lazy-load attendee names only when the modal opens, and combine counts/status into a database query or RPC. A /events/loading.tsx skeleton would also make navigation feel immediate while data loads. No code was changed during this diagnosis.
+
+
+
+Fix:
+Current benchmark
+I ran seven sequential, no-cache requests against the optimized local /events route.
+Sample	TTFB	Full response
+First sample	0.375s	1.831s
+Warm run 1	0.137s	1.068s
+Warm run 2	0.174s	0.928s
+Warm run 3	0.299s	1.339s
+Warm run 4	0.118s	0.932s
+Warm run 5	0.277s	1.321s
+Warm run 6	0.166s	0.552s
+
+
+The first sample was the first run in this benchmark, but Supabase had already received earlier traffic. It should not be presented as a controlled cold-start measurement.
+Statistical results
+Measurement	Minimum	Maximum	Average	Median
+TTFB, all 7 runs	0.118s	0.375s	0.221s	0.174s
+Full response, all 7 runs	0.552s	1.831s	1.139s	1.068s
+TTFB, 6 warm runs	0.118s	0.299s	0.195s	0.170s
+Full response, 6 warm runs	0.552s	1.339s	1.023s	1.000s
+
+
+The old implementation was not restored and rerun, so all old measurements are historical baselines.
+Before-versus-after results
+Metric	Before	After	Improvement
+Cold/first TTFB	21.1s	0.30–0.54s	20.56–20.80s saved; 97.4–98.6% reduction; 39.1–70.3× faster
+Second/full response	5.37s	1.1–1.8s	3.57–4.27s saved; 66.5–79.5% reduction; 3.0–4.9× faster
+Warm full response	1.46s	1.023s average	0.437s saved; 29.9% reduction; 1.43× faster
+Sequential stages	Up to 6	2	4 removed; 66.7% reduction
+Initial Supabase calls	Up to 6	4	2 removed or deferred; 33.3% reduction
+Attendee profiles	Eager	Lazy	Removed from initial page load
+User registration status	Separate query	Reuses registration rows	One query eliminated
+
+
+TTFB calculation
+Conservative comparison using 0.54 seconds:
+Time saved = 21.1 − 0.54 = 20.56 seconds
+Reduction  = 20.56 / 21.1 × 100 = 97.4%
+Speedup    = 21.1 / 0.54 = 39.1×
+Best-case comparison using 0.30 seconds:
+Time saved = 21.1 − 0.30 = 20.80 seconds
+Reduction  = 20.80 / 21.1 × 100 = 98.6%
+Speedup    = 21.1 / 0.30 = 70.3×
+The latest seven-run benchmark was even better, with a maximum observed TTFB of 0.375 seconds. However, the 0.54-second figure is the more conservative public claim.
+Warm-page comparison
+Using the latest six warm full-response samples:
+- Conservative: 1.46s → 1.339s
+  - 0.121s saved
+  - 8.3% reduction
+  - 1.09× faster
+- Best case: 1.46s → 0.552s
+  - 0.908s saved
+  - 62.2% reduction
+  - 2.65× faster
+- Average: 1.46s → 1.023s
+  - 0.437s saved
+  - 29.9% reduction
+  - 1.43× faster
+- Median: 1.46s → 1.000s
+  - 0.460s saved
+  - 31.5% reduction
+  - 1.46× faster
+Using the originally reported post-optimization range of 1.1–1.8 seconds, the slow end would be 23.3% slower than the old 1.46-second warm sample. That illustrates why multiple runs and averages are more defensible than selecting one result.
+Request-waterfall improvement
+Assuming each database stage takes approximately 600–700ms:
+Before: 6 × 600–700ms = 3.6–4.2 seconds
+After:  2 × 600–700ms = 1.2–1.4 seconds
+Saved:                       2.4–2.8 seconds
+That is a theoretical 66.7% reduction and 3× speedup in staged database waiting.
+This is an architectural improvement: concurrency changes the total latency from approximately the sum of every request to the maximum latency within each parallel stage. It remains beneficial even when individual Supabase requests fluctuate.
+Query and reliability improvements
+The signed-in initial path changed from approximately six calls to four:
+- Authentication and events still occur, but concurrently.
+- Profile and registrations still occur, but concurrently.
+- The attendee-profile request is deferred until the modal opens.
+- The separate current-user registration request was eliminated.
+- Attendee loading failures are isolated to the modal and now have a retry state.
+The old registrations request took 10.78 seconds and returned a 504. The optimization does not guarantee Supabase will never return another 504, but:
+- There are fewer initial requests that can fail.
+- Slow independent calls overlap instead of accumulating.
+- Attendee-profile failures cannot delay the initial page.
+- The loading skeleton reaches the browser before the final data finishes.
+- One delayed request no longer makes the navigation appear completely frozen.
+No specific failure-rate reduction can be claimed without longer-term production monitoring.
+Reusable summaries
+Technical summary
+Parallelized Supabase data fetching, reused registration results, deferred attendee-profile queries, and added streamed loading UI, reducing sequential request stages from six to two and lowering average warm completion time from 1.46s to 1.02s.
+
+Resume bullet
+Optimized a Next.js/Supabase event pipeline by parallelizing database requests, eliminating redundant registration queries, and lazy-loading attendee data, cutting sequential fetch stages 67% and observed local TTFB from 21.1s to ≤0.54s.
+
+Presentation sentence
+The Events page now begins responding at least 39× faster in observed local testing, while completing warm requests approximately 30% faster on average.
+
+Strongest defensible public metric
+Reduced observed local /events TTFB from 21.1 seconds to no more than 0.54 seconds—a 97.4% reduction and 39.1× speedup—while cutting sequential Supabase stages from six to two.
+
+Always include “observed local” and “TTFB” so this is not mistaken for a controlled production or full-page-load benchmark.
