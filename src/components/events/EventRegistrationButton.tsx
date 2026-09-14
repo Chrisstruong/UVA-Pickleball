@@ -15,6 +15,7 @@ type EventRegistrationButtonProps = {
   eventId: string;
   isSignedIn: boolean;
   isRegistered: boolean;
+  isWaitlisted: boolean;
   isFull: boolean;
   userGroup: string | null;
   requiredGroup: string | null;
@@ -25,6 +26,7 @@ export default function EventRegistrationButton({
   eventId,
   isSignedIn,
   isRegistered,
+  isWaitlisted,
   isFull,
   userGroup,
   requiredGroup,
@@ -35,7 +37,12 @@ export default function EventRegistrationButton({
     initialRegistrationState
   );
 
-  if (isRegistered || state.status === "success") {
+  const registeredAfterSubmit =
+    state.status === "success" && state.registrationStatus === "registered";
+  const waitlistedAfterSubmit =
+    state.status === "success" && state.registrationStatus === "waitlisted";
+
+  if (isRegistered || registeredAfterSubmit) {
     return (
       <div>
         <Button className="w-full" disabled>
@@ -51,18 +58,26 @@ export default function EventRegistrationButton({
     );
   }
 
+  if (isWaitlisted || waitlistedAfterSubmit) {
+    return (
+      <div>
+        <Button className="w-full" disabled>
+          Waitlisted
+        </Button>
+        <p
+          className="mt-2 text-sm font-medium text-amber-700"
+          aria-live="polite"
+        >
+          {state.message || "You are on the waitlist for this event."}
+        </p>
+      </div>
+    );
+  }
+
   if (!registrationOpen) {
     return (
       <Button className="w-full" disabled>
         Registration Closed
-      </Button>
-    );
-  }
-
-  if (isFull) {
-    return (
-      <Button className="w-full" disabled>
-        Event Full
       </Button>
     );
   }
@@ -94,7 +109,13 @@ export default function EventRegistrationButton({
         disabled={isPending}
         className="w-full bg-orange-600 font-heading uppercase tracking-wide hover:bg-orange-700"
       >
-        {isPending ? "Registering..." : "Register"}
+        {isPending
+          ? isFull
+            ? "Joining Waitlist..."
+            : "Registering..."
+          : isFull
+            ? "Join Waitlist"
+            : "Register"}
       </Button>
 
       {state.status === "error" && (

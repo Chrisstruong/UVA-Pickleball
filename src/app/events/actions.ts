@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 export type RegistrationState = {
   status: "idle" | "success" | "error";
   message: string;
+  registrationStatus?: "registered" | "waitlisted";
 };
 
 export async function registerForEvent(
@@ -126,12 +127,8 @@ export async function registerForEvent(
     };
   }
 
-  if (event.capacity !== null && (count ?? 0) >= event.capacity) {
-    return {
-      status: "error",
-      message: "This event has reached capacity.",
-    };
-  }
+  const registrationStatus =
+    (count ?? 0) < event.capacity ? "registered" : "waitlisted";
 
   // 6. Insert registration
   const { error: registrationError } = await supabaseAdmin
@@ -139,7 +136,7 @@ export async function registerForEvent(
     .insert({
       event_id: eventId,
       user_id: user.id,
-      status: "registered",
+      status: registrationStatus,
     });
 
   if (registrationError) {
@@ -161,6 +158,10 @@ export async function registerForEvent(
 
   return {
     status: "success",
-    message: "You are registered for this event.",
+    message:
+      registrationStatus === "registered"
+        ? "You are registered for this event."
+        : "You have joined the waitlist.",
+    registrationStatus,
   };
 }

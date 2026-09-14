@@ -58,6 +58,7 @@ function formatEventTime(startTime: string, endTime: string | null) {
 export default async function EventsPage() {
   const supabase = await createClient();
   let registeredEventIds: Set<string> = new Set();
+  let waitlistedEventIds: Set<string> = new Set();
 
   // 1. Get signed-in user
   const {
@@ -170,12 +171,20 @@ export default async function EventsPage() {
   if (user) {
     const { data: registrations } = await supabase
       .from("event_registrations")
-      .select("event_id")
+      .select("event_id, status")
       .eq("user_id", user.id)
-      .eq("status", "registered");
+      .in("status", ["registered", "waitlisted"]);
 
     registeredEventIds = new Set(
-      registrations?.map((registration) => registration.event_id) ?? []
+      registrations
+        ?.filter((registration) => registration.status === "registered")
+        .map((registration) => registration.event_id) ?? []
+    );
+
+    waitlistedEventIds = new Set(
+      registrations
+        ?.filter((registration) => registration.status === "waitlisted")
+        .map((registration) => registration.event_id) ?? []
     );
   }
   return (
@@ -343,6 +352,7 @@ export default async function EventsPage() {
                         eventId={event.id}
                         isSignedIn={!!user}
                         isRegistered={registeredEventIds.has(event.id)}
+                        isWaitlisted={waitlistedEventIds.has(event.id)}
                         isFull={isFull}
                         userGroup={profile?.club_group ?? null}
                         requiredGroup={event.required_group}
