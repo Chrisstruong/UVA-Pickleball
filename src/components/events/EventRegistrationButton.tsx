@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
-import { Button } from "@/components/ui/button";
 import {
   cancelEventRegistration,
   registerForEvent,
 } from "@/app/events/actions";
 import type { RegistrationState } from "@/app/events/actions";
+import { Button } from "@/components/ui/button";
 
 const initialRegistrationState: RegistrationState = {
   status: "idle",
@@ -17,12 +17,16 @@ const initialRegistrationState: RegistrationState = {
 type EventRegistrationButtonProps = {
   eventId: string;
   isSignedIn: boolean;
-  currentRegistrationStatus: "registered" | "waitlisted" | "none";
+  currentRegistrationStatus: CurrentRegistrationStatus;
   isFull: boolean;
   userGroup: string | null;
   requiredGroup: string | null;
   registrationOpen: boolean;
 };
+export type CurrentRegistrationStatus =
+  | "registered"
+  | "waitlisted"
+  | "none";
 
 export default function EventRegistrationButton({
   eventId,
@@ -114,7 +118,7 @@ export default function EventRegistrationButton({
   }
 
   return (
-    <form action={formAction}>
+    <form action={formAction} className="w-full">
       <input type="hidden" name="eventId" value={eventId} />
       <Button
         type="submit"

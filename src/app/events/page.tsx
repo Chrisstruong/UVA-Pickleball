@@ -1,13 +1,14 @@
 import Image from "next/image";
-import Link from "next/link";
-import { CalendarDays, Clock, MapPin, Users } from "lucide-react";
+import { CalendarDays, Clock, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 import ScrollToUpcomingEventsButton from "@/components/events/ScrollToUpcomingEventsButton";
 import ViewAttendeesButton from "@/components/events/ViewAttendeesButton";
-import EventRegistrationButton from "@/components/events/EventRegistrationButton";
+import EventRegistrationButton, {
+  type CurrentRegistrationStatus,
+} from "@/components/events/EventRegistrationButton";
 import EventsRealtimeListener from "@/components/events/EventsRealtimeListener";
 import EventsPresence from "@/components/events/EventsPresence";
 
@@ -101,26 +102,26 @@ export default async function EventsPage() {
   const waitlistCounts = new Map<string, number>();
   const profilePromise = user
     ? supabase
-        .from("profiles")
-        .select("id, full_name, avatar_url, club_group")
-        .eq("id", user.id)
-        .single()
+      .from("profiles")
+      .select("id, full_name, avatar_url, club_group")
+      .eq("id", user.id)
+      .single()
     : Promise.resolve({ data: null, error: null });
   const registrationsPromise =
     eventList.length > 0
       ? supabaseAdmin
-          .from("event_registrations")
-          .select("event_id, user_id, status, registered_at")
-          .in(
-            "event_id",
-            eventList.map((event) => event.id)
-          )
-          .in("status", ["registered", "waitlisted"])
-          .order("registered_at", { ascending: true })
+        .from("event_registrations")
+        .select("event_id, user_id, status, registered_at")
+        .in(
+          "event_id",
+          eventList.map((event) => event.id)
+        )
+        .in("status", ["registered", "waitlisted"])
+        .order("registered_at", { ascending: true })
       : Promise.resolve({
-          data: [] as EventRegistration[],
-          error: null,
-        });
+        data: [] as EventRegistration[],
+        error: null,
+      });
 
   const [profileResult, registrationsResult] = await Promise.all([
     profilePromise,
@@ -184,8 +185,8 @@ export default async function EventsPage() {
       <section className="mx-auto max-w-7xl px-5 py-6 md:px-6 md:py-8">
         <div className="relative mx-auto min-h-[560px] w-full overflow-hidden rounded-2xl sm:min-h-[500px] md:h-[450px] md:min-h-0">
           <Image
-            src="/images/events/TryOut2026.jpg"
-            alt="UVA Pickleball Fall 2026 Tryouts"
+            src="/images/events/SocialPlays.jpg"
+            alt="UVA Pickleball Fall 2026 Social Plays"
             fill
             priority
             className="object-cover object-[60%_center]"
@@ -207,33 +208,23 @@ export default async function EventsPage() {
               </div>
 
               <h1 className="font-hero text-5xl leading-[0.9] tracking-wide text-white min-[380px]:text-6xl md:text-7xl lg:text-8xl">
-                WELCOME BACK,
+                Let&apos;s play
                 <br />
-                HOOS.
+                PICKLEBALL.
               </h1>
 
               <h2 className="mt-3 font-heading text-xl font-bold uppercase leading-tight tracking-wide text-orange-600 sm:text-2xl md:text-3xl">
-                Fall 2026 Tryouts
+                Fall 2026 Events
               </h2>
 
               <p className="mt-4 max-w-[500px] text-sm leading-6 text-white/90 md:text-base">
-                Ready to compete, improve, and meet Hoos? Join our Fall
-                2026 tryout session and earn your spot on the UVA Pickleball Club.
-                Players of all skill levels are welcome.
+                Grab your paddle and come hang out with the Hoos! Join us for social play, friendly games, and plenty of fun on the court. Upcoming social and tournament events are listed below. Check back often for new events and updates.
               </p>
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <ScrollToUpcomingEventsButton />
 
-                <Button
-                  asChild
-                  variant="secondary"
-                  className="h-10 w-full rounded-md px-6 font-heading text-[11px] uppercase tracking-wide sm:w-auto md:h-11 md:px-7"
-                >
-                  <Link href="/announcements/tryoutdetails">
-                    View Tryout Details
-                  </Link>
-                </Button>
+
               </div>
             </div>
           </div>
@@ -303,13 +294,12 @@ export default async function EventsPage() {
               const registrationCount = registrationCounts.get(event.id) ?? 0;
               const waitlistCount = waitlistCounts.get(event.id) ?? 0;
               const isFull = registrationCount >= event.capacity;
-              const currentUserRegistrationStatus = registeredEventIds.has(
-                event.id
-              )
-                ? "registered"
-                : waitlistedEventIds.has(event.id)
-                  ? "waitlisted"
-                  : "none";
+              const currentUserRegistrationStatus: CurrentRegistrationStatus =
+                registeredEventIds.has(event.id)
+                  ? "registered"
+                  : waitlistedEventIds.has(event.id)
+                    ? "waitlisted"
+                    : "none";
 
               return (
                 <article
@@ -326,10 +316,15 @@ export default async function EventsPage() {
                     <span className="absolute left-3 top-3 rounded bg-orange-600 px-2 py-1 font-heading text-[10px] uppercase tracking-widest text-white sm:left-4 sm:top-4">
                       {event.event_type ?? "Club Event"}
                     </span>
-                    <span className="absolute right-3 top-3 rounded bg-white px-2 py-1 text-xs font-bold text-slate-700 sm:right-4 sm:top-4">
-                      <Users className="mr-1 inline h-3 w-3" />
-                      {registrationCount}/{event.capacity}
-                    </span>
+                    <ViewAttendeesButton
+                      eventId={event.id}
+                      eventTitle={event.title}
+                      capacity={event.capacity}
+                      registrationCount={registrationCount}
+                      waitlistCount={waitlistCount}
+                      canViewAttendees={!!user}
+                      triggerVariant="countBadge"
+                    />
                   </div>
 
                   <div className="p-5 sm:p-6">

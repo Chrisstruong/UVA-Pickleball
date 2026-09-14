@@ -277,7 +277,7 @@ export default function EventsPresence({
               aria-haspopup="dialog"
               aria-controls="events-online-viewers"
               aria-label={`View all ${viewers.length} online ${viewerLabel}`}
-              className="flex shrink-0 -space-x-3 rounded-full transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-300 motion-reduce:transition-none sm:-space-x-3.5"
+              className="flex shrink-0 -space-x-3 cursor-pointer rounded-full transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-300 motion-reduce:transition-none sm:-space-x-3.5"
             >
               {visibleViewers.map((viewer, index) => (
                 <OnlineAvatar
@@ -323,7 +323,7 @@ export default function EventsPresence({
             <header className="flex items-start justify-between gap-4 border-b border-white/10 px-5 py-5 sm:px-6">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-300">
-                  Live now
+                  Live
                 </p>
                 <h2
                   id="events-online-viewers-title"

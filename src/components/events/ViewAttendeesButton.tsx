@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { createPortal } from "react-dom";
-import { X } from "lucide-react";
+import { Users, X } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getEventAttendees } from "@/app/events/actions";
@@ -14,6 +14,7 @@ type ViewAttendeesButtonProps = {
   registrationCount: number;
   waitlistCount: number;
   canViewAttendees: boolean;
+  triggerVariant?: "button" | "countBadge";
 };
 
 export default function ViewAttendeesButton({
@@ -23,7 +24,9 @@ export default function ViewAttendeesButton({
   registrationCount,
   waitlistCount,
   canViewAttendees,
+  triggerVariant = "button",
 }: ViewAttendeesButtonProps) {
+  const titleId = useId();
   const [isOpen, setIsOpen] = useState(false);
   const [attendees, setAttendees] = useState<string[]>([]);
   const [waitlistedAttendees, setWaitlistedAttendees] = useState<string[]>([]);
@@ -86,6 +89,20 @@ export default function ViewAttendeesButton({
   ]);
 
   if (!canViewAttendees) {
+    if (triggerVariant === "countBadge") {
+      return (
+        <Link
+          href="/login"
+          className="absolute right-3 top-3 inline-flex cursor-pointer items-center rounded bg-white px-2 py-1 text-xs font-bold text-slate-700 shadow-sm transition hover:bg-orange-600 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-600 focus-visible:ring-offset-2 sm:right-4 sm:top-4"
+          aria-label={`Sign in to view attendees for ${eventTitle}`}
+          title="Sign in to view attendees"
+        >
+          <Users className="mr-1 h-3 w-3" aria-hidden="true" />
+          {registrationCount}/{capacity}
+        </Link>
+      );
+    }
+
     return (
       <Button
         asChild
@@ -99,14 +116,29 @@ export default function ViewAttendeesButton({
 
   return (
     <>
-      <Button
-        type="button"
-        variant="outline"
-        onClick={() => setIsOpen(true)}
-        className="w-full font-heading uppercase tracking-wide"
-      >
-        View Attendees
-      </Button>
+      {triggerVariant === "countBadge" ? (
+        <button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          className="absolute right-3 top-3 inline-flex cursor-pointer items-center rounded bg-white px-2 py-1 text-xs font-bold text-slate-700 shadow-sm transition hover:bg-orange-600 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-600 focus-visible:ring-offset-2 sm:right-4 sm:top-4"
+          aria-haspopup="dialog"
+          aria-label={`View attendees for ${eventTitle}`}
+          title="View attendees"
+        >
+          <Users className="mr-1 h-3 w-3" aria-hidden="true" />
+          {registrationCount}/{capacity}
+        </button>
+      ) : (
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => setIsOpen(true)}
+          className="w-full font-heading uppercase tracking-wide"
+          aria-haspopup="dialog"
+        >
+          View Attendees
+        </Button>
+      )}
 
       {isOpen &&
         createPortal(
@@ -114,7 +146,7 @@ export default function ViewAttendeesButton({
             className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/50 px-4 py-6"
             role="dialog"
             aria-modal="true"
-            aria-labelledby={`${eventTitle}-attendees-title`}
+            aria-labelledby={titleId}
           >
             <div className="flex max-h-[85vh] w-full max-w-lg flex-col rounded-lg bg-white p-6 shadow-xl">
               <div className="flex items-start justify-between gap-4">
@@ -123,7 +155,7 @@ export default function ViewAttendeesButton({
                     {registrationCount}/{capacity} Signed Up
                   </p>
                   <h3
-                    id={`${eventTitle}-attendees-title`}
+                    id={titleId}
                     className="mt-2 font-heading text-2xl font-bold tracking-tight"
                   >
                     {eventTitle}
