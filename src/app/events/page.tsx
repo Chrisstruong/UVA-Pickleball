@@ -7,9 +7,9 @@ import { createClient } from "@/lib/supabase/server";
 
 import ScrollToUpcomingEventsButton from "@/components/events/ScrollToUpcomingEventsButton";
 import ViewAttendeesButton from "@/components/events/ViewAttendeesButton";
-import MoreEventsComing from "@/components/events/MoreEventsComing";
 import EventRegistrationButton from "@/components/events/EventRegistrationButton";
 import EventsRealtimeListener from "@/components/events/EventsRealtimeListener";
+import EventsPresence from "@/components/events/EventsPresence";
 
 type ClubEvent = {
   id: string;
@@ -72,7 +72,7 @@ export default async function EventsPage() {
   if (user) {
     const { data } = await supabase
       .from("profiles")
-      .select("id, full_name, club_group")
+      .select("id, full_name, avatar_url, club_group")
       .eq("id", user.id)
       .single();
 
@@ -268,7 +268,7 @@ export default async function EventsPage() {
       </section>
 
       {/* More Fall 2026 events */}
-      <MoreEventsComing />
+      {/* <MoreEventsComing /> */}
 
       <section className="mx-auto grid max-w-7xl gap-8 px-5 py-8 md:px-6 md:py-10 lg:grid-cols-[260px_1fr]">
         <aside className="hidden lg:block">
@@ -318,6 +318,12 @@ export default async function EventsPage() {
               Join the UVA Pickleball community on the courts. Find your match here.
             </p>
           </div>
+
+          <EventsPresence
+            userId={user?.id ?? null}
+            fullName={profile?.full_name ?? null}
+            avatarUrl={profile?.avatar_url ?? null}
+          />
 
           <div className="grid gap-6 md:grid-cols-2 md:gap-8">
             {eventList.map((event) => {
