@@ -11,6 +11,103 @@ export type RegistrationState = {
   eventIsFull?: boolean;
 };
 
+export type EventAttendeesResult =
+  | {
+      status: "success";
+      attendees: string[];
+      waitlistedAttendees: string[];
+    }
+  | {
+      status: "error";
+      message: string;
+    };
+
+export async function getEventAttendees(
+  eventId: string
+): Promise<EventAttendeesResult> {
+  if (!eventId || eventId.length > 100) {
+    return { status: "error", message: "This event could not be identified." };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return {
+      status: "error",
+      message: "You must be signed in to view attendees.",
+    };
+  }
+
+  const { data: registrations, error: registrationsError } =
+    await supabaseAdmin
+      .from("event_registrations")
+      .select("user_id, status, registered_at")
+      .eq("event_id", eventId)
+      .in("status", ["registered", "waitlisted"])
+      .order("registered_at", { ascending: true });
+
+  if (registrationsError) {
+    console.error("Attendee registration lookup failed:", registrationsError);
+    return {
+      status: "error",
+      message: "Unable to load attendees. Please try again.",
+    };
+  }
+
+  if (!registrations || registrations.length === 0) {
+    return {
+      status: "success",
+      attendees: [],
+      waitlistedAttendees: [],
+    };
+  }
+
+  const attendeeIds = [
+    ...new Set(registrations.map((registration) => registration.user_id)),
+  ];
+  const { data: attendeeProfiles, error: attendeeProfilesError } =
+    await supabaseAdmin
+      .from("profiles")
+      .select("id, full_name")
+      .in("id", attendeeIds);
+
+  if (attendeeProfilesError) {
+    console.error("Attendee profile lookup failed:", attendeeProfilesError);
+    return {
+      status: "error",
+      message: "Unable to load attendee names. Please try again.",
+    };
+  }
+
+  const attendeeNameById = new Map(
+    attendeeProfiles?.map((attendee) => [
+      attendee.id,
+      attendee.full_name || "Club Member",
+    ]) ?? []
+  );
+  const attendees: string[] = [];
+  const waitlistedAttendees: string[] = [];
+
+  registrations.forEach((registration) => {
+    const attendeeName =
+      attendeeNameById.get(registration.user_id) ?? "Club Member";
+
+    if (registration.status === "waitlisted") {
+      waitlistedAttendees.push(attendeeName);
+    } else {
+      attendees.push(attendeeName);
+    }
+  });
+
+  attendees.sort((first, second) => first.localeCompare(second));
+
+  return { status: "success", attendees, waitlistedAttendees };
+}
+
 export async function cancelEventRegistration(
   _previousState: RegistrationState,
   formData: FormData
@@ -195,8 +292,6 @@ export async function registerForEvent(
   }
 
   const supabase = await createClient();
-
-  // 1. Get signed-in user
   const {
     data: { user },
     error: userError,
@@ -209,7 +304,6 @@ export async function registerForEvent(
     };
   }
 
-  // 2. Get profile
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("club_group")
@@ -223,7 +317,6 @@ export async function registerForEvent(
     };
   }
 
-  // 3. Get event
   const { data: event, error: eventError } = await supabase
     .from("events")
     .select(`
@@ -249,7 +342,6 @@ export async function registerForEvent(
     };
   }
 
-  // 4. Check eligibility
   if (
     event.required_group &&
     profile.club_group !== event.required_group
@@ -260,7 +352,6 @@ export async function registerForEvent(
     };
   }
 
-  // 5. Check existing registration
   const {
     data: existingRegistration,
     error: existingError,
@@ -301,7 +392,6 @@ export async function registerForEvent(
   const registrationStatus =
     (count ?? 0) < event.capacity ? "registered" : "waitlisted";
 
-  // 6. Insert registration
   const { error: registrationError } = await supabaseAdmin
     .from("event_registrations")
     .insert({

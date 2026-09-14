@@ -17,8 +17,7 @@ const initialRegistrationState: RegistrationState = {
 type EventRegistrationButtonProps = {
   eventId: string;
   isSignedIn: boolean;
-  isRegistered: boolean;
-  isWaitlisted: boolean;
+  currentRegistrationStatus: "registered" | "waitlisted" | "none";
   isFull: boolean;
   userGroup: string | null;
   requiredGroup: string | null;
@@ -28,8 +27,7 @@ type EventRegistrationButtonProps = {
 export default function EventRegistrationButton({
   eventId,
   isSignedIn,
-  isRegistered,
-  isWaitlisted,
+  currentRegistrationStatus,
   isFull,
   userGroup,
   requiredGroup,
@@ -50,9 +48,11 @@ export default function EventRegistrationButton({
     state.status === "success" && state.registrationStatus === "waitlisted";
   const cancellationSucceeded = cancellationState.status === "success";
   const currentlyRegistered =
-    (isRegistered || registeredAfterSubmit) && !cancellationSucceeded;
+    (currentRegistrationStatus === "registered" || registeredAfterSubmit) &&
+    !cancellationSucceeded;
   const currentlyWaitlisted =
-    (isWaitlisted || waitlistedAfterSubmit) && !cancellationSucceeded;
+    (currentRegistrationStatus === "waitlisted" || waitlistedAfterSubmit) &&
+    !cancellationSucceeded;
   const eventIsFull = cancellationSucceeded
     ? cancellationState.eventIsFull ?? isFull
     : isFull;

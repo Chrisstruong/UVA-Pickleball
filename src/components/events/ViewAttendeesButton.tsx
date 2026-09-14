@@ -5,25 +5,31 @@ import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { getEventAttendees } from "@/app/events/actions";
 
 type ViewAttendeesButtonProps = {
+  eventId: string;
   eventTitle: string;
-  attendees: string[];
-  waitlistedAttendees: string[];
   capacity: number;
-  registrationCount?: number;
+  registrationCount: number;
+  waitlistCount: number;
   canViewAttendees: boolean;
 };
 
 export default function ViewAttendeesButton({
+  eventId,
   eventTitle,
-  attendees,
-  waitlistedAttendees,
   capacity,
-  registrationCount = attendees.length,
+  registrationCount,
+  waitlistCount,
   canViewAttendees,
 }: ViewAttendeesButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [attendees, setAttendees] = useState<string[]>([]);
+  const [waitlistedAttendees, setWaitlistedAttendees] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadError, setLoadError] = useState("");
+  const [loadRequest, setLoadRequest] = useState(0);
 
   useEffect(() => {
     if (!isOpen) {
@@ -38,6 +44,46 @@ export default function ViewAttendeesButton({
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!isOpen || !canViewAttendees) {
+      return;
+    }
+
+    let ignoreResult = false;
+
+    const loadAttendees = async () => {
+      setIsLoading(true);
+      setLoadError("");
+
+      const result = await getEventAttendees(eventId);
+
+      if (ignoreResult) {
+        return;
+      }
+
+      if (result.status === "error") {
+        setLoadError(result.message);
+      } else {
+        setAttendees(result.attendees);
+        setWaitlistedAttendees(result.waitlistedAttendees);
+      }
+
+      setIsLoading(false);
+    };
+
+    void loadAttendees();
+
+    return () => {
+      ignoreResult = true;
+    };
+  }, [
+    canViewAttendees,
+    eventId,
+    isOpen,
+    loadRequest,
+    registrationCount,
+    waitlistCount,
+  ]);
 
   if (!canViewAttendees) {
     return (
@@ -95,52 +141,72 @@ export default function ViewAttendeesButton({
               </div>
 
               <div className="mt-6 min-h-0 space-y-6 overflow-y-auto pr-1">
-                <section>
-                  <h4 className="text-sm font-bold text-[#07192d]">
-                    Registered ({attendees.length})
-                  </h4>
-                  <ul className="mt-2 rounded-md border border-slate-200">
-                    {attendees.length > 0 ? (
-                      attendees.map((attendee, index) => (
-                        <li
-                          key={`${attendee}-${index}`}
-                          className="border-b border-slate-100 px-4 py-3 text-sm text-slate-700 last:border-b-0"
-                        >
-                          {attendee}
-                        </li>
-                      ))
-                    ) : (
-                      <li className="px-4 py-6 text-center text-sm text-slate-500">
-                        No registered attendees yet.
-                      </li>
-                    )}
-                  </ul>
-                </section>
+                {isLoading ? (
+                  <p className="rounded-md border border-slate-200 px-4 py-8 text-center text-sm text-slate-500">
+                    Loading attendees...
+                  </p>
+                ) : loadError ? (
+                  <div className="rounded-md border border-red-200 bg-red-50 px-4 py-5 text-center">
+                    <p className="text-sm text-red-700">{loadError}</p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setLoadRequest((request) => request + 1)}
+                      className="mt-3"
+                    >
+                      Try Again
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <section>
+                      <h4 className="text-sm font-bold text-[#07192d]">
+                        Registered ({attendees.length})
+                      </h4>
+                      <ul className="mt-2 rounded-md border border-slate-200">
+                        {attendees.length > 0 ? (
+                          attendees.map((attendee, index) => (
+                            <li
+                              key={`${attendee}-${index}`}
+                              className="border-b border-slate-100 px-4 py-3 text-sm text-slate-700 last:border-b-0"
+                            >
+                              {attendee}
+                            </li>
+                          ))
+                        ) : (
+                          <li className="px-4 py-6 text-center text-sm text-slate-500">
+                            No registered attendees yet.
+                          </li>
+                        )}
+                      </ul>
+                    </section>
 
-                <section>
-                  <h4 className="text-sm font-bold text-[#07192d]">
-                    Waitlist ({waitlistedAttendees.length})
-                  </h4>
-                  <ul className="mt-2 rounded-md border border-amber-200 bg-amber-50/40">
-                    {waitlistedAttendees.length > 0 ? (
-                      waitlistedAttendees.map((attendee, index) => (
-                        <li
-                          key={`${attendee}-${index}`}
-                          className="flex gap-3 border-b border-amber-100 px-4 py-3 text-sm text-slate-700 last:border-b-0"
-                        >
-                          <span className="font-semibold text-amber-700">
-                            {index + 1}.
-                          </span>
-                          <span>{attendee}</span>
-                        </li>
-                      ))
-                    ) : (
-                      <li className="px-4 py-6 text-center text-sm text-slate-500">
-                        No one is currently waitlisted.
-                      </li>
-                    )}
-                  </ul>
-                </section>
+                    <section>
+                      <h4 className="text-sm font-bold text-[#07192d]">
+                        Waitlist ({waitlistedAttendees.length})
+                      </h4>
+                      <ul className="mt-2 rounded-md border border-amber-200 bg-amber-50/40">
+                        {waitlistedAttendees.length > 0 ? (
+                          waitlistedAttendees.map((attendee, index) => (
+                            <li
+                              key={`${attendee}-${index}`}
+                              className="flex gap-3 border-b border-amber-100 px-4 py-3 text-sm text-slate-700 last:border-b-0"
+                            >
+                              <span className="font-semibold text-amber-700">
+                                {index + 1}.
+                              </span>
+                              <span>{attendee}</span>
+                            </li>
+                          ))
+                        ) : (
+                          <li className="px-4 py-6 text-center text-sm text-slate-500">
+                            No one is currently waitlisted.
+                          </li>
+                        )}
+                      </ul>
+                    </section>
+                  </>
+                )}
               </div>
             </div>
           </div>,

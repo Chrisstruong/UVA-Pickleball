@@ -27,6 +27,13 @@ type ClubEvent = {
   registration_open: boolean;
 };
 
+type EventRegistration = {
+  event_id: string;
+  user_id: string;
+  status: string;
+  registered_at: string;
+};
+
 const eventDateFormatter = new Intl.DateTimeFormat("en-US", {
   timeZone: "America/New_York",
   weekday: "long",
@@ -54,156 +61,122 @@ function formatEventTime(startTime: string, endTime: string | null) {
   return `${start}–${eventTimeFormatter.format(new Date(endTime))}`;
 }
 
-
-
 export default async function EventsPage() {
   const supabase = await createClient();
   let registeredEventIds: Set<string> = new Set();
   let waitlistedEventIds: Set<string> = new Set();
 
-  // 1. Get signed-in user
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const [authResult, eventsResult] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase
+      .from("events")
+      .select(`
+        id,
+        title,
+        description,
+        event_type,
+        location,
+        image_url,
+        start_time,
+        end_time,
+        capacity,
+        required_group,
+        registration_open
+      `)
+      .order("start_time", { ascending: true }),
+  ]);
 
-  // 2. Get profile if signed in
-  let profile = null;
+  const user = authResult.data.user;
 
-  if (user) {
-    const { data } = await supabase
-      .from("profiles")
-      .select("id, full_name, avatar_url, club_group")
-      .eq("id", user.id)
-      .single();
-
-    profile = data;
+  if (authResult.error) {
+    console.error("Failed to authenticate Events page user:", authResult.error);
   }
 
-  // 3. Get events
-  const { data: events, error } = await supabase
-    .from("events")
-    .select(`
-    id,
-    title,
-    description,
-    event_type,
-    location,
-    image_url,
-    start_time,
-    end_time,
-    capacity,
-    required_group,
-    registration_open
-  `)
-    .order("start_time", { ascending: true });
-  if (error) {
-    console.error("Failed to fetch events:", error);
+  if (eventsResult.error) {
+    console.error("Failed to fetch events:", eventsResult.error);
   }
 
-  const eventList: ClubEvent[] = events ?? [];
+  const eventList: ClubEvent[] = eventsResult.data ?? [];
   const registrationCounts = new Map<string, number>();
-  const attendeeNamesByEvent = new Map<string, string[]>();
-  const waitlistNamesByEvent = new Map<string, string[]>();
+  const waitlistCounts = new Map<string, number>();
+  const profilePromise = user
+    ? supabase
+        .from("profiles")
+        .select("id, full_name, avatar_url, club_group")
+        .eq("id", user.id)
+        .single()
+    : Promise.resolve({ data: null, error: null });
+  const registrationsPromise =
+    eventList.length > 0
+      ? supabaseAdmin
+          .from("event_registrations")
+          .select("event_id, user_id, status, registered_at")
+          .in(
+            "event_id",
+            eventList.map((event) => event.id)
+          )
+          .in("status", ["registered", "waitlisted"])
+          .order("registered_at", { ascending: true })
+      : Promise.resolve({
+          data: [] as EventRegistration[],
+          error: null,
+        });
 
-  if (eventList.length > 0) {
-    const { data: eventRegistrations, error: registrationsError } =
-      await supabaseAdmin
-        .from("event_registrations")
-        .select("event_id, user_id, status, registered_at")
-        .in(
-          "event_id",
-          eventList.map((event) => event.id)
-        )
-        .in("status", ["registered", "waitlisted"])
-        .order("registered_at", { ascending: true });
+  const [profileResult, registrationsResult] = await Promise.all([
+    profilePromise,
+    registrationsPromise,
+  ]);
+  const profile = profileResult.data;
+  const eventRegistrations: EventRegistration[] =
+    registrationsResult.data ?? [];
 
-    if (registrationsError) {
-      console.error("Failed to fetch registration counts:", registrationsError);
-    }
-
-    eventRegistrations?.forEach((registration) => {
-      if (registration.status === "registered") {
-        registrationCounts.set(
-          registration.event_id,
-          (registrationCounts.get(registration.event_id) ?? 0) + 1
-        );
-      }
-    });
-
-    if (user && eventRegistrations && eventRegistrations.length > 0) {
-      const attendeeIds = [
-        ...new Set(
-          eventRegistrations.map((registration) => registration.user_id)
-        ),
-      ];
-
-      const { data: attendeeProfiles, error: attendeeProfilesError } =
-        await supabaseAdmin
-          .from("profiles")
-          .select("id, full_name")
-          .in("id", attendeeIds);
-
-      if (attendeeProfilesError) {
-        console.error(
-          "Failed to fetch attendee profiles:",
-          attendeeProfilesError
-        );
-      }
-
-      const attendeeNameById = new Map(
-        attendeeProfiles?.map((attendee) => [
-          attendee.id,
-          attendee.full_name || "Club Member",
-        ]) ?? []
-      );
-
-      eventRegistrations.forEach((registration) => {
-        const targetMap =
-          registration.status === "waitlisted"
-            ? waitlistNamesByEvent
-            : attendeeNamesByEvent;
-        const existingNames =
-          targetMap.get(registration.event_id) ?? [];
-
-        targetMap.set(registration.event_id, [
-          ...existingNames,
-          attendeeNameById.get(registration.user_id) ?? "Club Member",
-        ]);
-      });
-
-      attendeeNamesByEvent.forEach((names) => {
-        names.sort((first, second) => first.localeCompare(second));
-      });
-    }
+  if (profileResult.error) {
+    console.error("Failed to fetch Events page profile:", profileResult.error);
   }
 
-  if (user) {
-    const { data: registrations, error: userRegistrationsError } =
-      await supabaseAdmin
-      .from("event_registrations")
-      .select("event_id, status")
-      .eq("user_id", user.id)
-      .in("status", ["registered", "waitlisted"]);
+  if (registrationsResult.error) {
+    console.error(
+      "Failed to fetch registration counts:",
+      registrationsResult.error
+    );
+  }
 
-    if (userRegistrationsError) {
-      console.error(
-        "Failed to fetch the current user's registrations:",
-        userRegistrationsError
+  eventRegistrations.forEach((registration) => {
+    if (registration.status === "registered") {
+      registrationCounts.set(
+        registration.event_id,
+        (registrationCounts.get(registration.event_id) ?? 0) + 1
+      );
+    } else if (registration.status === "waitlisted") {
+      waitlistCounts.set(
+        registration.event_id,
+        (waitlistCounts.get(registration.event_id) ?? 0) + 1
       );
     }
+  });
 
+  if (user) {
     registeredEventIds = new Set(
-      registrations
-        ?.filter((registration) => registration.status === "registered")
-        .map((registration) => registration.event_id) ?? []
+      eventRegistrations
+        .filter(
+          (registration) =>
+            registration.user_id === user.id &&
+            registration.status === "registered"
+        )
+        .map((registration) => registration.event_id)
     );
 
     waitlistedEventIds = new Set(
-      registrations
-        ?.filter((registration) => registration.status === "waitlisted")
-        .map((registration) => registration.event_id) ?? []
+      eventRegistrations
+        .filter(
+          (registration) =>
+            registration.user_id === user.id &&
+            registration.status === "waitlisted"
+        )
+        .map((registration) => registration.event_id)
     );
   }
+
   return (
     <main className="bg-slate-50">
       <EventsRealtimeListener />
@@ -328,9 +301,7 @@ export default async function EventsPage() {
           <div className="grid gap-6 md:grid-cols-2 md:gap-8">
             {eventList.map((event) => {
               const registrationCount = registrationCounts.get(event.id) ?? 0;
-              const attendees = attendeeNamesByEvent.get(event.id) ?? [];
-              const waitlistedAttendees =
-                waitlistNamesByEvent.get(event.id) ?? [];
+              const waitlistCount = waitlistCounts.get(event.id) ?? 0;
               const isFull = registrationCount >= event.capacity;
               const currentUserRegistrationStatus = registeredEventIds.has(
                 event.id
@@ -386,8 +357,7 @@ export default async function EventsPage() {
                         key={`${event.id}-${currentUserRegistrationStatus}`}
                         eventId={event.id}
                         isSignedIn={!!user}
-                        isRegistered={registeredEventIds.has(event.id)}
-                        isWaitlisted={waitlistedEventIds.has(event.id)}
+                        currentRegistrationStatus={currentUserRegistrationStatus}
                         isFull={isFull}
                         userGroup={profile?.club_group ?? null}
                         requiredGroup={event.required_group}
@@ -395,11 +365,11 @@ export default async function EventsPage() {
                       />
 
                       <ViewAttendeesButton
+                        eventId={event.id}
                         eventTitle={event.title}
-                        attendees={attendees}
-                        waitlistedAttendees={waitlistedAttendees}
                         capacity={event.capacity}
                         registrationCount={registrationCount}
+                        waitlistCount={waitlistCount}
                         canViewAttendees={!!user}
                       />
                     </div>
