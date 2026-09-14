@@ -9,6 +9,7 @@ import ScrollToUpcomingEventsButton from "@/components/events/ScrollToUpcomingEv
 import ViewAttendeesButton from "@/components/events/ViewAttendeesButton";
 import MoreEventsComing from "@/components/events/MoreEventsComing";
 import EventRegistrationButton from "@/components/events/EventRegistrationButton";
+import EventsRealtimeListener from "@/components/events/EventsRealtimeListener";
 
 type ClubEvent = {
   id: string;
@@ -205,6 +206,8 @@ export default async function EventsPage() {
   }
   return (
     <main className="bg-slate-50">
+      <EventsRealtimeListener />
+
       <section className="mx-auto max-w-7xl px-5 py-6 md:px-6 md:py-8">
         <div className="relative mx-auto min-h-[560px] w-full overflow-hidden rounded-2xl sm:min-h-[500px] md:h-[450px] md:min-h-0">
           <Image
