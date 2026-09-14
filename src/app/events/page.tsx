@@ -2,23 +2,27 @@ import Image from "next/image";
 import Link from "next/link";
 import { CalendarDays, Clock, MapPin, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/server";
 
 import ScrollToUpcomingEventsButton from "@/components/events/ScrollToUpcomingEventsButton";
 import ViewAttendeesButton from "@/components/events/ViewAttendeesButton";
 import MoreEventsComing from "@/components/events/MoreEventsComing";
+import EventRegistrationButton from "@/components/events/EventRegistrationButton";
 
 type ClubEvent = {
+  id: string;
   title: string;
-  type: string;
-  date: string;
-  time: string;
-  location: string;
-  attendees: string[];
+  description: string | null;
+  event_type: string | null;
+  location: string | null;
+  image_url: string | null;
+
+  start_time: string;
+  end_time: string | null;
+
   capacity: number;
-  image: string;
-  status: string;
-  signupUrl?: string;
-  slug?: string;
+  required_group: string | null;
+  registration_open: boolean;
 };
 
 const events: ClubEvent[] = [
@@ -98,7 +102,62 @@ const events: ClubEvent[] = [
 ];
 
 
-export default function EventsPage() {
+export default async function EventsPage() {
+  const supabase = await createClient();
+  let registeredEventIds = new Set<string>();
+
+  // 1. Get signed-in user
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // 2. Get profile if signed in
+  let profile = null;
+
+  if (user) {
+    const { data } = await supabase
+      .from("profiles")
+      .select("id, full_name, club_group")
+      .eq("id", user.id)
+      .single();
+
+    profile = data;
+  }
+
+  // 3. Get events
+  const { data: events, error } = await supabase
+    .from("events")
+    .select(`
+      id,
+      title,
+      description,
+      event_type,
+      location,
+      image_url,
+      start_time,
+      end_time,
+      capacity,
+      required_group,
+      registration_open
+    `)
+    .order("start_time", { ascending: true });
+
+  if (error) {
+    console.error("Failed to fetch events:", error);
+  }
+
+
+  if (user) {
+    const { data: registrations } = await supabase
+      .from("event_registrations")
+      .select("event_id")
+      .eq("user_id", user.id)
+      .eq("status", "registered");
+
+    registeredEventIds = new Set(
+      registrations?.map((registration) => registration.event_id) ?? []
+    );
+  }
   return (
     <main className="bg-slate-50">
       <section className="mx-auto max-w-7xl px-5 py-6 md:px-6 md:py-8">
@@ -263,18 +322,14 @@ export default function EventsPage() {
                         Event Full
                       </Button>
                     ) : (
-                      <Button
-                        asChild
-                        className="w-full bg-orange-600 font-heading uppercase tracking-wide hover:bg-orange-700"
-                      >
-                        <a
-                          href={event.signupUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Sign Up
-                        </a>
-                      </Button>
+                      <EventRegistrationButton
+                        eventId={event.id}
+                        isSignedIn={!!user}
+                        isRegistered={registeredEventIds.has(event.id)}
+                        userGroup={profile?.club_group ?? null}
+                        requiredGroup={event.required_group}
+                        registrationOpen={event.registration_open}
+                      />
                     )}
 
                     <ViewAttendeesButton
